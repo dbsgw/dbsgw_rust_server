@@ -1,0 +1,39 @@
+package utils
+
+import "time"
+
+const (
+	YearMonthDay     = "2006-01-02"
+	HourMinuteSecond = "15:04:05"
+	DefaultLayout    = YearMonthDay + " " + HourMinuteSecond
+)
+/**
+ * 格式化数据
+ */
+func FormatDatetime(time time.Time) string {
+	return time.Format("2006-01-02 03:04:05")
+}
+
+// GetDate 获取当前时间
+func GetDate() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+func GetDay() string {
+	template := "20060102"
+	return time.Now().Format(template)
+}
+
+func GetUnixNano() int64 {
+	return time.Now().UnixNano()
+}
+
+func GetUnix() int64 {
+	return time.Now().Unix()
+}
+
+// 默认格式日期字符串转time
+func TimeStrToTimeDefault(str string) time.Time {
+	parseTime, _ := time.ParseInLocation(DefaultLayout, str, time.Local)
+	return parseTime
+}

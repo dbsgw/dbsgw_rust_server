@@ -8,22 +8,17 @@
 package routers
 
 import (
-	"dbsgw_rust_server/controllers"
+	"dbsgw_rust_server/controllers/v1"
 
 	beego "github.com/beego/beego/v2/server/web"
 )
 
 func init() {
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/object",
-			beego.NSInclude(
-				&controllers.ObjectController{},
-			),
-		),
+		// 登录/注册
 		beego.NSNamespace("/user",
-			beego.NSInclude(
-				&controllers.UserController{},
-			),
+			beego.NSRouter("/", &v1.UserController{}, "get:GetAll"),
+			beego.NSRouter("/login", &v1.UserController{}, "get:Login"),
 		),
 	)
 	beego.AddNamespace(ns)
