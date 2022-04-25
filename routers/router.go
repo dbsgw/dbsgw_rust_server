@@ -19,6 +19,7 @@ func init() {
 		beego.NSNamespace("/user",
 			beego.NSRouter("/", &v1.UserController{}, "get:GetAll"),
 			beego.NSRouter("/login", &v1.UserController{}, "get:Login"),
+			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),
 		),
 	)
 	beego.AddNamespace(ns)

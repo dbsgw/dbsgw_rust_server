@@ -1,8 +1,8 @@
 package main
 
 import (
+	_ "dbsgw_rust_server/initialize"
 	_ "dbsgw_rust_server/routers"
-
 	beego "github.com/beego/beego/v2/server/web"
 )
 

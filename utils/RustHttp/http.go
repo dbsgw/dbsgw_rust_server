@@ -1,4 +1,4 @@
-package utils
+package RustHttp
 
 import (
 	"bytes"
