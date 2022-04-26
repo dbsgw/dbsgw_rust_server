@@ -17,9 +17,9 @@ func init() {
 	ns := beego.NewNamespace("/v1",
 		// 登录/注册
 		beego.NSNamespace("/user",
-			beego.NSRouter("/", &v1.UserController{}, "get:GetAll"),
-			beego.NSRouter("/login", &v1.UserController{}, "get:Login"),
-			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),
+			beego.NSRouter("/login", &v1.UserController{}, "get:Login"),                    // 登录接口
+			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),   // gitee回调接口
+			beego.NSRouter("/login/oauth/githup", &v1.UserController{}, "get:OauthGitHup"), // githup回调接口
 		),
 	)
 	beego.AddNamespace(ns)

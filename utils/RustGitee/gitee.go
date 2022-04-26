@@ -3,6 +3,7 @@ package RustGitee
 import (
 	"dbsgw_rust_server/utils/RustHttp"
 	"encoding/json"
+	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
 	"net/url"
 	"time"
@@ -59,17 +60,17 @@ type Email struct {
 //  获取code  get	https://gitee.com/oauth/authorize?client_id=eb30f085980d8fea35284e6923a4c9213393c27172ce1a00df7ca0a88d7de9dd&redirect_uri=http://127.0.0.1:3000/login/oauth&response_type=code
 func RedirectUrl() string {
 
-	ClientID, _ := beego.AppConfig.String("ClientID")
-	RedirectUrl, _ := beego.AppConfig.String("RedirectUrl")
+	ClientID, _ := beego.AppConfig.String("GiteeClientID")
+	RedirectUrl, _ := beego.AppConfig.String("GiteeRedirectUrl")
 	return "https://gitee.com/oauth/authorize?client_id=" + ClientID + "&redirect_uri=" + RedirectUrl + "&response_type=code"
 }
 
 // 获取 access_token post  https://gitee.com/oauth/token
 
 func GetAccessToken(code string) Token {
-	ClientID, _ := beego.AppConfig.String("ClientID")
-	RedirectUrl, _ := beego.AppConfig.String("RedirectUrl")
-	ClientSecret, _ := beego.AppConfig.String("ClientSecret")
+	ClientID, _ := beego.AppConfig.String("GiteeClientID")
+	RedirectUrl, _ := beego.AppConfig.String("GiteeRedirectUrl")
+	ClientSecret, _ := beego.AppConfig.String("GiteeClientSecret")
 	// 要 POST的 参数
 	form := url.Values{
 		"grant_type":    {"authorization_code"},
@@ -78,6 +79,7 @@ func GetAccessToken(code string) Token {
 		"redirect_uri":  {RedirectUrl},
 		"client_secret": {ClientSecret},
 	}
+	fmt.Println(form)
 	userToken := Token{}
 	str := RustHttp.Post("https://gitee.com/oauth/token", form)
 	json.Unmarshal([]byte(str), &userToken)
