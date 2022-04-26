@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 // 直接拼rul 路径
@@ -16,12 +15,13 @@ func Get(requestUrl string) string {
 	client := &http.Client{}
 	resp, errGet := client.Get(requestUrl)
 	if errGet != nil {
-		panic(errGet)
+		log.Print(errGet)
+
 	}
 	defer resp.Body.Close()
 	body, errAll := ioutil.ReadAll(resp.Body)
 	if errAll != nil {
-		panic(errAll)
+		log.Print(errAll)
 	}
 	return string(body)
 }
@@ -43,12 +43,12 @@ func Post(requestUrl string, form url.Values) string {
 	data := bytes.NewBufferString(form.Encode())
 	rsp, errPost := http.Post(requestUrl, "application/x-www-form-urlencoded", data)
 	if errPost != nil {
-		panic(errPost)
+		log.Print(errPost)
 	}
 	defer rsp.Body.Close()
 	body, errAll := ioutil.ReadAll(rsp.Body)
 	if errAll != nil {
-		panic(errAll)
+		log.Print(errAll)
 	}
 	return string(body)
 }
@@ -64,25 +64,24 @@ func PostJson(requestUrl string, form url.Values) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.Print(err)
 	}
 
 	defer resp.Body.Close()
 	body, errAll := ioutil.ReadAll(resp.Body)
 	if errAll != nil {
-		panic(errAll)
+		log.Print(errAll)
 	}
 	return string(body)
 }
 
+// GetJson 针对 githup 的 获取用户信息
 func GetJson(requestUrl, token string) string {
 
 	req, err := http.NewRequest("GET", requestUrl, nil)
 	if err != nil {
 		log.Print(err)
-		os.Exit(1)
 	}
-
 	q := req.URL.Query()
 	req.Header.Set("Accept", "application/json")
 	//Authorization: token 361507da
@@ -97,7 +96,7 @@ func GetJson(requestUrl, token string) string {
 	defer resp.Body.Close()
 	body, errAll := ioutil.ReadAll(resp.Body)
 	if errAll != nil {
-		panic(errAll)
+		log.Print(errAll)
 	}
 	return string(body)
 }

@@ -2,6 +2,8 @@ package v1
 
 import (
 	"dbsgw_rust_server/controllers"
+	"dbsgw_rust_server/models"
+	"dbsgw_rust_server/utils"
 	"dbsgw_rust_server/utils/RustConstant"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
@@ -9,6 +11,7 @@ import (
 	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/validation"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
 )
 
@@ -47,7 +50,7 @@ func (u *UserController) Login() {
 			fmt.Println("email登录")
 			break
 		case RustConstant.GITEE:
-			fmt.Println("gitee登录")
+			fmt.Println("gitee登录", RustGitee.RedirectUrl())
 			u.Redirect(RustGitee.RedirectUrl(), 302)
 			break
 		case RustConstant.GITHUP:
@@ -70,10 +73,26 @@ func (u *UserController) Login() {
 func (u *UserController) OauthGitee() {
 	// 获取code
 	code := u.GetString("code")
+	bl := utils.IsEmpty(code)
+	if !bl {
+		u.Fail("code为空---系统错误", 500)
+		return
+	}
 	// 通过code 获取token
 	userToken := RustGitee.GetAccessToken(code)
+	bl = utils.IsEmpty(userToken.AccessToken)
+	if !bl {
+		u.Fail("userToken为空---系统错误", 500)
+		return
+	}
 	// 通过token 获取用户信息
 	user := RustGitee.GetUserInfos(userToken)
+	fmt.Println(user, "user---user")
+	bl = utils.IsEmpty(user.Id)
+	if !bl {
+		u.Fail("user.Id为空---系统错误", 500)
+		return
+	}
 	// 通过token 获取邮箱
 	emailsReust := RustGitee.GetEmails(userToken)
 	// 序列化  取邮箱
@@ -86,10 +105,47 @@ func (u *UserController) OauthGitee() {
 	}
 	fmt.Println(email)
 
+	uid, _ := gonanoid.New()
+	UserAuth := models.UserAuth{
+		Uid:          uid,
+		IdentityType: 0,
+		Identifier:   "",
+		Certificate:  "",
+		CreateTime:   int(utils.GetUnix()),
+		UpdateTime:   int(utils.GetUnix()),
+	}
+
+	UserBase := models.UserBase{
+		Uid:            uid,
+		UserRole:       0,
+		RegisterSource: 0,
+		UserName:       "",
+		NickName:       "",
+		Gender:         0,
+		Birthday:       0,
+		Signature:      "",
+		Mobile:         "",
+		MobileBindTime: 0,
+		Email:          "",
+		EmailBindTime:  0,
+		Face:           "",
+		Face200:        "",
+		Srcface:        "",
+		CreateTime:     int(utils.GetUnix()),
+		UpdateTime:     int(utils.GetUnix()),
+	}
+
+	// TODO  需要加限定 是注册  还是 登录，登录是不需要插入的
+	// 插入数据库
 	o := orm.NewOrm()
-	var maps []orm.Params
-	r, _ := o.Raw("show tables").Values(&maps)
-	fmt.Println(r, maps[0]["Tables_in_rust"])
+	_, err := o.Insert(&UserBase)
+	if err == nil {
+		fmt.Println(err)
+	}
+	_, err = o.Insert(&UserAuth)
+	if err == nil {
+		fmt.Println(err)
+	}
 
 	u.Ok(user)
 
@@ -153,10 +209,10 @@ func (u *UserController) OauthGitHup() {
 	}
 	fmt.Println(email)
 
-	o := orm.NewOrm()
-	var maps []orm.Params
-	r, _ := o.Raw("show tables").Values(&maps)
-	fmt.Println(r, maps[0]["Tables_in_rust"])
+	//o := orm.NewOrm()
+	//var maps []orm.Params
+	//r, _ := o.Raw("show tables").Values(&maps)
+	//fmt.Println(r, maps[0]["Tables_in_rust"])
 
 	u.Ok(user)
 
