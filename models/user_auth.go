@@ -4,7 +4,7 @@ import "github.com/beego/beego/v2/client/orm"
 
 // UserAuth 用户授权表
 type UserAuth struct {
-	Id           int    `json:"id"`            // id
+	Id           int    `json:"id"`            // id 主键
 	Uid          string `json:"uid"`           // '用户id',
 	IdentityType int    `json:"identity_type"` // '1邮箱 2gitee 3githup ',
 	Identifier   string `json:"identifier"`    // '手机号 邮箱 用户名或第三方应用的唯一标识',

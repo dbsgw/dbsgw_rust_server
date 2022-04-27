@@ -13,6 +13,7 @@ import (
 	"github.com/beego/beego/v2/core/validation"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
+	"strconv"
 )
 
 // Operations about Users
@@ -108,8 +109,8 @@ func (u *UserController) OauthGitee() {
 	uid, _ := gonanoid.New()
 	UserAuth := models.UserAuth{
 		Uid:          uid,
-		IdentityType: 0,
-		Identifier:   "",
+		IdentityType: 2,
+		Identifier:   strconv.Itoa(user.Id),
 		Certificate:  "",
 		CreateTime:   int(utils.GetUnix()),
 		UpdateTime:   int(utils.GetUnix()),
@@ -118,9 +119,9 @@ func (u *UserController) OauthGitee() {
 	UserBase := models.UserBase{
 		Uid:            uid,
 		UserRole:       0,
-		RegisterSource: 0,
-		UserName:       "",
-		NickName:       "",
+		RegisterSource: 2,
+		UserName:       user.Login,
+		NickName:       user.Name,
 		Gender:         0,
 		Birthday:       0,
 		Signature:      "",
@@ -128,55 +129,38 @@ func (u *UserController) OauthGitee() {
 		MobileBindTime: 0,
 		Email:          "",
 		EmailBindTime:  0,
-		Face:           "",
+		Face:           user.AvatarUrl,
 		Face200:        "",
 		Srcface:        "",
 		CreateTime:     int(utils.GetUnix()),
 		UpdateTime:     int(utils.GetUnix()),
 	}
 
-	// TODO  需要加限定 是注册  还是 登录，登录是不需要插入的
 	// 插入数据库
 	o := orm.NewOrm()
-	_, err := o.Insert(&UserBase)
-	if err == nil {
-		fmt.Println(err)
+	GetAuth := []models.UserAuth{}
+	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 2, user.Id).QueryRows(&GetAuth)
+	fmt.Println(num, "---------res", GetAuth)
+	if err != nil {
+		u.Fail("用户查询报错---系统错误", 500)
+		return
 	}
-	_, err = o.Insert(&UserAuth)
-	if err == nil {
-		fmt.Println(err)
+	if num == 0 {
+		_, err = o.Insert(&UserBase)
+		if err == nil {
+			u.Fail("插入UserBase失败", 500)
+			return
+		}
+		_, err = o.Insert(&UserAuth)
+		if err == nil {
+			u.Fail("插入UserAuth失败", 500)
+			return
+		}
+		u.Ok("注册成功")
+	} else {
+		u.Ok("登录成功")
 	}
 
-	u.Ok(user)
-
-	//// 登录的  uid 也就是  gitee的id  不能为空  为空代表 取消授权，取消登录
-	//if string(user.Id) == "" || user.Id == 0 {
-	//	u.Ctx.Redirect(301, "/")
-	//	return
-	//}
-	//
-	//// 查询 数据库  是否有  用户存在
-	//Users := []models.User{}
-	//err := utils.DB.Raw("select * from user where uid = ?", user.Id).Find(&Users).Error
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//// 不存在 插入
-	//if len(Users) == 0 {
-	//	res := map[string]interface{}{}
-	//	err = utils.DB.Raw("insert into user (uid, username, login, email, avatar_url, html_url, created_at, status,addTime) VALUES (?,?,?,?,?,?,?,?)", user.Id, user.Name, user.Login, email, user.AvatarUrl, user.HtmlUrl, user.CreatedAt, utils.GetDate()).Find(&res).Error
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//} else {
-	//	// 存在  更新数据
-	//	res := map[string]interface{}{}
-	//	err = utils.DB.Raw("update user set username = ?,login=?,email=?,avatar_url=?,html_url=?,created_at=?,updateTime=? where uid = ?", user.Name, user.Login, email, user.AvatarUrl, user.HtmlUrl, user.CreatedAt, utils.GetDate(), user.Id).Find(&res).Error
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//}
 	//// 创建token 发放到cookie
 	//Secrect, _ := beego.AppConfig.String("Secrect")
 	//token, _ := utils.CreateToken(fmt.Sprintf("%d", user.Id), Secrect)
