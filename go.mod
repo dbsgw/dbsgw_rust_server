@@ -18,6 +18,7 @@ require (
 	github.com/fsnotify/fsnotify v1.5.3 // indirect
 	github.com/go-delve/delve v1.8.2 // indirect
 	github.com/go-delve/liner v1.2.2-1 // indirect
+	github.com/go-redis/redis/v7 v7.4.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-dap v0.6.0 // indirect

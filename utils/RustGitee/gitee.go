@@ -24,7 +24,7 @@ type Token struct {
 
 // 用户信息
 
-type UserInfo struct {
+type RustUserInfo struct {
 	Id                int       `json:"id"`
 	Login             string    `json:"login"`
 	Name              string    `json:"name"`
@@ -88,9 +88,9 @@ func GetAccessToken(code string) Token {
 
 // 获取用户资料 get https://gitee.com/api/v5/user?access_token=1256465456444545
 
-func GetUserInfos(userToken Token) UserInfo {
-	userInfos := UserInfo{}
+func GetUserInfos(userToken Token) RustUserInfo {
 	data := RustHttp.Get("https://gitee.com/api/v5/user?access_token=" + userToken.AccessToken)
+	userInfos := RustUserInfo{}
 	json.Unmarshal([]byte(data), &userInfos)
 	return userInfos
 }

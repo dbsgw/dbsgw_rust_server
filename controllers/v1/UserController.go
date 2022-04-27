@@ -115,7 +115,6 @@ func (u *UserController) OauthGitee() {
 		CreateTime:   int(utils.GetUnix()),
 		UpdateTime:   int(utils.GetUnix()),
 	}
-
 	UserBase := models.UserBase{
 		Uid:            uid,
 		UserRole:       0,
@@ -135,7 +134,6 @@ func (u *UserController) OauthGitee() {
 		CreateTime:     int(utils.GetUnix()),
 		UpdateTime:     int(utils.GetUnix()),
 	}
-
 	// 插入数据库
 	o := orm.NewOrm()
 	GetAuth := []models.UserAuth{}
@@ -147,17 +145,22 @@ func (u *UserController) OauthGitee() {
 	}
 	if num == 0 {
 		_, err = o.Insert(&UserBase)
-		if err == nil {
+		if err != nil {
 			u.Fail("插入UserBase失败", 500)
 			return
 		}
 		_, err = o.Insert(&UserAuth)
-		if err == nil {
+		if err != nil {
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
+		u.SetSession(uid, uid)
 		u.Ok("注册成功")
 	} else {
+		fmt.Println(uid, "uid---uid")
+		for i := 0; i < 100000; i++ {
+			u.SetSession(i, uid)
+		}
 		u.Ok("登录成功")
 	}
 
