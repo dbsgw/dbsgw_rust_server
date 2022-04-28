@@ -3,3 +3,19 @@
 2022/04/28 09:36:50.311  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.6065ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
 2022/04/28 09:46:38.102  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.0336ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
 2022/04/28 09:49:08.628  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.2541ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:20:39.828  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     5.1582ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:24:10.584  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     13.549ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:25:10.627  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    10.1322ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:26:42.743  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.8648ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:43.435  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.3808ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:45.058  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.0003ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:53.097  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.9428ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:35:12.213  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     5.0417ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 13:58:27.033  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.4272ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 13:58:27.120  [D] [router.go:1272]  |      127.0.0.1|[43m 404 [0m|     3.2316ms| nomatch|[44m GET     [0m /favicon.ico
+2022/04/28 13:59:31.253  [D] [router.go:1272]  |      127.0.0.1|[43m 405 [0m|      6.247ms| nomatch|[44m GET     [0m /v1/user/login
+2022/04/28 14:00:41.946  [D] [router.go:1272]  |      127.0.0.1|[43m 405 [0m|     3.0677ms| nomatch|[44m GET     [0m /v1/user/login
+2022/04/28 14:01:32.849  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.0133ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:24:10.356  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     2.8086ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:24:40.399  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.3245ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:25:13.587  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.4481ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login

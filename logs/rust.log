@@ -14,3 +14,103 @@
 2022/04/28 09:46:38.102  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.0336ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
 2022/04/28 09:49:08.628  [E] [UserController.go:86]  验证码出错
 2022/04/28 09:49:08.628  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.2541ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:16:11.371  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:17:35.659  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:17:37.430  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:18:23.893  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:18:57.686  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:20:01.132  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:20:19.352  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:20:39.828  [E] [UserController.go:89]  验证码出错
+2022/04/28 10:20:39.828  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     5.1582ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:22:07.533  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:22:13.094  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:22:24.678  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:24:06.654  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:24:08.078  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:24:10.584  [E] [UserController.go:81]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:24:10.584  [I] [UserController.go:86]  验证码不正确
+2022/04/28 10:24:10.584  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     13.549ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:25:06.066  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:25:10.626  [E] [UserController.go:81]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:25:10.627  [I] [UserController.go:87]  验证码不正确
+2022/04/28 10:25:10.627  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    10.1322ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:26:01.128  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:26:40.873  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:26:42.743  [E] [UserController.go:82]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:26:42.743  [I] [UserController.go:88]  验证码不正确
+2022/04/28 10:26:42.743  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.8648ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:39.308  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:40.875  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:42.094  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:42.946  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:43.434  [E] [UserController.go:83]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:27:43.435  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.3808ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:44.079  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:45.040  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:45.058  [E] [UserController.go:83]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:27:45.058  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.0003ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:27:45.967  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:46.927  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:47.786  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:48.726  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:49.594  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:27:53.097  [E] [UserController.go:83]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:27:53.097  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.9428ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 10:28:21.713  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:28:55.968  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:29:27.534  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:29:42.474  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:30:18.835  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:30:28.339  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:30:43.781  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:11.331  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:13.546  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:18.593  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:20.114  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:25.463  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:31:29.007  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:32:48.623  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:32:53.343  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:34:11.520  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:34:28.270  [E] [redisinit.go:22]  redis链接失败 dial tcp 127.0.0.1:6379: connectex: No connection could be made because the target machine actively refused it.
+2022/04/28 10:35:09.657  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 10:35:12.213  [E] [UserController.go:84]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 10:35:12.213  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     5.0417ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 12:31:25.475  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:27.246  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:28.159  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:28.715  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:29.689  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:30.609  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:31.560  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:32.531  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:33.379  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:34.289  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:35.175  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:36.116  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:37.078  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:37.939  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 12:31:38.828  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:50:39.320  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:50:40.522  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:50:43.163  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:58:20.657  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:58:27.033  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 13:58:27.033  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.4272ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 13:58:27.120  [D] [router.go:1272]  |      127.0.0.1|[43m 404 [0m|     3.2316ms| nomatch|[44m GET     [0m /favicon.ico
+2022/04/28 13:59:28.258  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 13:59:31.253  [D] [router.go:1272]  |      127.0.0.1|[43m 405 [0m|      6.247ms| nomatch|[44m GET     [0m /v1/user/login
+2022/04/28 14:00:39.625  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 14:00:41.946  [D] [router.go:1272]  |      127.0.0.1|[43m 405 [0m|     3.0677ms| nomatch|[44m GET     [0m /v1/user/login
+2022/04/28 14:00:59.952  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 14:01:32.849  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 14:01:32.849  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.0133ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:23:49.952  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 14:24:10.356  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 14:24:10.356  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     2.8086ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:24:40.399  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 14:24:40.399  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.3245ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 14:24:52.286  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 14:25:13.587  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 14:25:13.587  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.4481ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
