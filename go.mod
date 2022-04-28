@@ -14,6 +14,7 @@ require (
 	github.com/cosiner/argv v0.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/derekparker/trie v0.0.0-20200317170641-1fdf38b7b0e9 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/flosch/pongo2 v0.0.0-20200913210552-0d938eb266f3 // indirect
 	github.com/fsnotify/fsnotify v1.5.3 // indirect
 	github.com/go-delve/delve v1.8.2 // indirect

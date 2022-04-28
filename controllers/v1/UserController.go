@@ -8,9 +8,11 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
+	"dbsgw_rust_server/utils/RustJwt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
+	beego "github.com/beego/beego/v2/server/web"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
 	"strconv"
@@ -86,8 +88,106 @@ func (u *UserController) Login() {
 			return
 		}
 		if code == val {
-			u.Ok("成功")
-			return
+
+			// 登录注册  有就登录  没有就注册
+			// 插入数据库
+			o := orm.NewOrm()
+			GetAuth := []models.UserAuth{}
+			num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 1, email).QueryRows(&GetAuth)
+			if err != nil {
+				logs.Error("用户查询auth报错---系统错误", err)
+				u.Fail("用户查询auth报错---系统错误", 500)
+				return
+			}
+
+			switch num {
+			case 0:
+				uid, _ := gonanoid.New()
+				UserAuth := models.UserAuth{
+					Uid:          uid,
+					IdentityType: 1,
+					Identifier:   email,
+					Certificate:  "",
+					CreateTime:   int(utils.GetUnix()),
+					UpdateTime:   int(utils.GetUnix()),
+				}
+				UserBase := models.UserBase{
+					Uid:            uid,
+					UserRole:       0,
+					RegisterSource: 1,
+					UserName:       "",
+					NickName:       "",
+					Gender:         0,
+					Birthday:       0,
+					Signature:      "",
+					Mobile:         "",
+					MobileBindTime: 0,
+					Email:          "",
+					EmailBindTime:  0,
+					Face:           "",
+					Face200:        "",
+					Srcface:        "",
+					CreateTime:     int(utils.GetUnix()),
+					UpdateTime:     int(utils.GetUnix()),
+				}
+				_, err = o.Insert(&UserBase)
+				if err != nil {
+					logs.Error("插入UserBase失败", err)
+					u.Fail("插入UserBase失败", 500)
+					return
+				}
+				_, err = o.Insert(&UserAuth)
+				if err != nil {
+					logs.Error("插入UserAuth失败", err)
+					u.Fail("插入UserAuth失败", 500)
+					return
+				}
+				Secrect, err := beego.AppConfig.String("Secrect")
+				if err != nil {
+					logs.Info("获取jwt密钥错误", err)
+				}
+				token, err := RustJwt.CreateToken(uid, Secrect)
+				if err != nil {
+					logs.Info("token生成失败", err)
+					u.Fail("token生成失败", 500)
+					return
+				}
+
+				u.SetSession(token, UserBase)
+				u.Ok(map[string]interface{}{
+					"msg":   "注册成功",
+					"token": token,
+				})
+				break
+			case 1:
+				GetBase := []models.UserBase{}
+				num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
+				if err != nil {
+					logs.Error("用户查询base报错---系统错误", err)
+					u.Fail("用户查询base报错---系统错误", 500)
+					return
+				}
+				Secrect, err := beego.AppConfig.String("Secrect")
+				if err != nil {
+					logs.Info("获取jwt密钥错误", err)
+				}
+				token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
+				if err != nil {
+					logs.Info("token生成失败", err)
+					u.Fail("token生成失败", 500)
+					return
+				}
+
+				u.SetSession(token, GetBase[0])
+				u.Ok(map[string]interface{}{
+					"msg":   "登录成功",
+					"token": token,
+				})
+
+			default:
+				u.Fail("用户存在多个账号", 500)
+			}
+
 		} else {
 			logs.Info("验证码不正确")
 			u.Fail("验证码不正确", 500)
@@ -184,10 +284,21 @@ func (u *UserController) OauthGitee() {
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
-		u.SetSession(uid, UserBase)
+		Secrect, err := beego.AppConfig.String("Secrect")
+		if err != nil {
+			logs.Info("获取jwt密钥错误", err)
+		}
+		token, err := RustJwt.CreateToken(uid, Secrect)
+		if err != nil {
+			logs.Info("token生成失败", err)
+			u.Fail("token生成失败", 500)
+			return
+		}
+
+		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
 			"msg":   "注册成功",
-			"token": uid,
+			"token": token,
 		})
 		break
 	case 1:
@@ -198,10 +309,21 @@ func (u *UserController) OauthGitee() {
 			u.Fail("用户查询base报错---系统错误", 500)
 			return
 		}
-		u.SetSession(GetBase[0].Uid, GetBase[0])
+		Secrect, err := beego.AppConfig.String("Secrect")
+		if err != nil {
+			logs.Info("获取jwt密钥错误", err)
+		}
+		token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
+		if err != nil {
+			logs.Info("token生成失败", err)
+			u.Fail("token生成失败", 500)
+			return
+		}
+
+		u.SetSession(token, GetBase[0])
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
-			"token": GetBase[0].Uid,
+			"token": token,
 		})
 
 	default:
@@ -298,10 +420,22 @@ func (u *UserController) OauthGitHup() {
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
-		u.SetSession(uid, UserBase)
+
+		Secrect, err := beego.AppConfig.String("Secrect")
+		if err != nil {
+			logs.Info("获取jwt密钥错误", err)
+		}
+		token, err := RustJwt.CreateToken(uid, Secrect)
+		if err != nil {
+			logs.Info("token生成失败", err)
+			u.Fail("token生成失败", 500)
+			return
+		}
+
+		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
 			"msg":   "注册成功",
-			"token": uid,
+			"token": token,
 		})
 		break
 	case 1:
@@ -312,10 +446,21 @@ func (u *UserController) OauthGitHup() {
 			u.Fail("用户查询base报错---系统错误", 500)
 			return
 		}
-		u.SetSession(GetBase[0].Uid, GetBase[0])
+		Secrect, err := beego.AppConfig.String("Secrect")
+		if err != nil {
+			logs.Info("获取jwt密钥错误", err)
+		}
+		token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
+		if err != nil {
+			logs.Info("token生成失败", err)
+			u.Fail("token生成失败", 500)
+			return
+		}
+
+		u.SetSession(token, GetBase[0])
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
-			"token": GetBase[0].Uid,
+			"token": token,
 		})
 
 	default:

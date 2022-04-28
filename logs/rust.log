@@ -114,3 +114,35 @@
 2022/04/28 14:24:52.286  [I] [server.go:238]  http server Running on http://:3000
 2022/04/28 14:25:13.587  [I] [UserController.go:77]  邮箱登录---表单验证错误：  Can not be empty
 2022/04/28 14:25:13.587  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     4.4481ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:00:06.903  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:08.596  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:09.751  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:10.336  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:11.270  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:12.154  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:13.024  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:13.934  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:14.811  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:15.708  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:16.593  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:17.506  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:18.353  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:00:19.300  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:01:25.604  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|   427.1307ms|   match|[44m GET     [0m /v1/user/login/oauth/gitee   r:/v1/user/login/oauth/gitee
+2022/04/28 15:03:36.320  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:07:02.407  [I] [server.go:238]  http server Running on http://:3000
+2022/04/28 15:09:14.070  [I] [UserController.go:79]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 15:09:14.070  [I] [UserController.go:79]  邮箱登录---表单验证错误：  Can not be empty
+2022/04/28 15:09:14.070  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     9.8645ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:09:38.807  [E] [UserController.go:86]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 15:09:38.807  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     3.5015ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:15.427  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|   987.2912ms|   match|[44m GET     [0m /v1/user/login/code   r:/v1/user/login/code
+2022/04/28 15:10:28.294  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    13.5277ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:31.023  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    58.3899ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:32.811  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    63.6539ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:35.647  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     5.4821ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:39.111  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    55.7098ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:43.674  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     7.5862ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:10:47.723  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|    65.8015ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
+2022/04/28 15:14:01.139  [E] [UserController.go:86]  邮箱登录---获取redis失败： redis: nil
+2022/04/28 15:14:01.139  [D] [router.go:1272]  |      127.0.0.1|[42m 200 [0m|     6.8977ms|   match|[44m GET     [0m /v1/user/login   r:/v1/user/login
