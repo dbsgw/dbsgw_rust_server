@@ -9,6 +9,7 @@ import (
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
 	"dbsgw_rust_server/utils/RustJwt"
+	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
@@ -341,6 +342,7 @@ func (u *UserController) OauthGitHup() {
 		u.Fail("code为空---系统错误", 500)
 		return
 	}
+	fmt.Println(code, "0000000000000000000000000000000000000000")
 	// 通过code 获取token
 	userToken := RustGitHup.GetAccessToken(code)
 	bl = utils.IsEmpty(userToken.AccessToken)
