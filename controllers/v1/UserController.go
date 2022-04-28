@@ -10,6 +10,7 @@ import (
 	"dbsgw_rust_server/utils/RustGitee"
 	"fmt"
 	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
@@ -82,6 +83,7 @@ func (u *UserController) Login() {
 			u.Ok("成功")
 		} else {
 			u.Fail("验证码不正确", 500)
+			logs.Error("验证码出错")
 		}
 	}
 }
