@@ -8,7 +8,6 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
-	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
@@ -35,8 +34,11 @@ func (u *UserController) Code() {
 		// 打印错误信息
 		for _, err := range valid.Errors {
 			log.Println(err.Key, err.Message)
+			logs.Info("验证码---表单验证错误：", err)
+
 		}
 		u.Fail("表单验证错误", 500)
+		return
 	} else {
 
 		// 生成验证码  放到redis里面  可以 已邮箱做key
@@ -46,7 +48,9 @@ func (u *UserController) Code() {
 		// 1 分钟  设置到  redis里面去
 		err := initialize.Rdb.Set(email, randstr, time.Minute*1).Err()
 		if err != nil {
-			fmt.Println("错误", err)
+			logs.Info("验证码---插入redis失败:", email)
+			u.Fail("验证设置失败", 500)
+			return
 		}
 
 		// 发送邮箱验证码
@@ -70,20 +74,24 @@ func (u *UserController) Login() {
 		// 如果有错误信息，证明验证没通过
 		// 打印错误信息
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logs.Info("邮箱登录---表单验证错误：", err)
 		}
 		u.Fail("表单验证错误", 500)
+		return
 	} else {
-
 		val, err := initialize.Rdb.Get(email).Result()
 		if err != nil {
-			fmt.Println(err)
+			logs.Error("邮箱登录---获取redis失败：", err)
+			u.Fail("获取验证码失败", 500)
+			return
 		}
 		if code == val {
 			u.Ok("成功")
+			return
 		} else {
+			logs.Info("验证码不正确")
 			u.Fail("验证码不正确", 500)
-			logs.Error("验证码出错")
+			return
 		}
 	}
 }
@@ -94,6 +102,7 @@ func (u *UserController) OauthGitee() {
 	code := u.GetString("code")
 	bl := utils.IsEmpty(code)
 	if !bl {
+		logs.Info("code为空---系统错误")
 		u.Fail("code为空---系统错误", 500)
 		return
 	}
@@ -101,6 +110,7 @@ func (u *UserController) OauthGitee() {
 	userToken := RustGitee.GetAccessToken(code)
 	bl = utils.IsEmpty(userToken.AccessToken)
 	if !bl {
+		logs.Info("userToken为空---系统错误")
 		u.Fail("userToken为空---系统错误", 500)
 		return
 	}
@@ -127,6 +137,7 @@ func (u *UserController) OauthGitee() {
 	GetAuth := []models.UserAuth{}
 	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 2, user.Id).QueryRows(&GetAuth)
 	if err != nil {
+		logs.Error("用户查询auth报错---系统错误", err)
 		u.Fail("用户查询auth报错---系统错误", 500)
 		return
 	}
@@ -163,11 +174,13 @@ func (u *UserController) OauthGitee() {
 		}
 		_, err = o.Insert(&UserBase)
 		if err != nil {
+			logs.Error("插入UserBase失败", err)
 			u.Fail("插入UserBase失败", 500)
 			return
 		}
 		_, err = o.Insert(&UserAuth)
 		if err != nil {
+			logs.Error("插入UserAuth失败", err)
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
@@ -181,6 +194,7 @@ func (u *UserController) OauthGitee() {
 		GetBase := []models.UserBase{}
 		num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
 		if err != nil {
+			logs.Error("用户查询base报错---系统错误", err)
 			u.Fail("用户查询base报错---系统错误", 500)
 			return
 		}
@@ -201,6 +215,7 @@ func (u *UserController) OauthGitHup() {
 	code := u.GetString("code")
 	bl := utils.IsEmpty(code)
 	if !bl {
+		logs.Info("code为空---系统错误")
 		u.Fail("code为空---系统错误", 500)
 		return
 	}
@@ -208,6 +223,7 @@ func (u *UserController) OauthGitHup() {
 	userToken := RustGitHup.GetAccessToken(code)
 	bl = utils.IsEmpty(userToken.AccessToken)
 	if !bl {
+		logs.Info("userToken为空---系统错误")
 		u.Fail("userToken为空---系统错误", 500)
 		return
 	}
@@ -215,6 +231,7 @@ func (u *UserController) OauthGitHup() {
 	user := RustGitHup.GetUserInfos(userToken)
 	bl = utils.IsEmpty(user.Id)
 	if !bl {
+		logs.Info("user.Id为空---系统错误")
 		u.Fail("user.Id为空---系统错误", 500)
 		return
 	}
@@ -234,6 +251,7 @@ func (u *UserController) OauthGitHup() {
 	GetAuth := []models.UserAuth{}
 	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 3, user.Id).QueryRows(&GetAuth)
 	if err != nil {
+		logs.Error("用户查询auth报错---系统错误", err)
 		u.Fail("用户查询auth报错---系统错误", 500)
 		return
 	}
@@ -270,11 +288,13 @@ func (u *UserController) OauthGitHup() {
 		}
 		_, err = o.Insert(&UserBase)
 		if err != nil {
+			logs.Error("插入UserBase失败---系统错误", err)
 			u.Fail("插入UserBase失败", 500)
 			return
 		}
 		_, err = o.Insert(&UserAuth)
 		if err != nil {
+			logs.Error("插入UserAuth失败---系统错误", err)
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
@@ -288,6 +308,7 @@ func (u *UserController) OauthGitHup() {
 		GetBase := []models.UserBase{}
 		num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
 		if err != nil {
+			logs.Error("用户查询base报错---系统错误", err)
 			u.Fail("用户查询base报错---系统错误", 500)
 			return
 		}

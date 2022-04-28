@@ -2,7 +2,10 @@ package initialize
 
 // 报错没有做处理
 
-import "github.com/go-redis/redis/v7"
+import (
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/go-redis/redis/v7"
+)
 
 // 声明全局rdb变量
 var Rdb *redis.Client
@@ -13,5 +16,10 @@ func redisinit() {
 		Password: "",
 		DB:       1,
 	})
-	Rdb.Ping().Result()
+	_, err := Rdb.Ping().Result()
+	
+	if err != nil {
+		logs.Error("redis链接失败", err)
+		return
+	}
 }

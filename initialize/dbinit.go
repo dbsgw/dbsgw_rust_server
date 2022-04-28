@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
@@ -25,10 +26,18 @@ func registDatabase() {
 	dbPort, _ := beego.AppConfig.String("mysqlport")
 	maxIdleConn, _ := beego.AppConfig.Int("db_max_idle_conn")
 	maxOpenConn, _ := beego.AppConfig.Int("db_max_open_open")
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql",
+	err := orm.RegisterDriver("mysql", orm.DRMySQL)
+	if err != nil {
+		logs.Error("数据库链接错误", err)
+		return
+	}
+	err = orm.RegisterDataBase("default", "mysql",
 		dbUser+":"+dbPass+"@tcp("+dbHost+":"+dbPort+")/"+dbName+"?charset=utf8&parseTime=true&loc=Asia%2FShanghai",
 	)
+	if err != nil {
+		logs.Error("数据库链接错误", err)
+		return
+	}
 	orm.MaxIdleConnections(maxIdleConn)
 	orm.MaxOpenConnections(maxOpenConn)
 	orm.DefaultTimeLoc = time.UTC
