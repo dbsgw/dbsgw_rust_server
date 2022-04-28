@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"time"
 )
@@ -36,13 +38,13 @@ func GetUnix() int64 {
 	return time.Now().Unix()
 }
 
-// 默认格式日期字符串转time
+// TimeStrToTimeDefault 默认格式日期字符串转time
 func TimeStrToTimeDefault(str string) time.Time {
 	parseTime, _ := time.ParseInLocation(DefaultLayout, str, time.Local)
 	return parseTime
 }
 
-// 判断是否未空  空false  有值为true
+// IsEmpty 判断是否未空  空false  有值为true
 func IsEmpty(con interface{}) bool {
 	switch con.(type) {
 	case string:
@@ -61,4 +63,11 @@ func IsEmpty(con interface{}) bool {
 		fmt.Println("执行false")
 		return false
 	}
+}
+
+// RandString 生成随机字符串
+func RandString(n int) string {
+	result := make([]byte, n/2)
+	rand.Read(result)
+	return hex.EncodeToString(result)
 }

@@ -2,16 +2,19 @@ package v1
 
 import (
 	"dbsgw_rust_server/controllers"
+	"dbsgw_rust_server/initialize"
 	"dbsgw_rust_server/models"
 	"dbsgw_rust_server/utils"
-	"dbsgw_rust_server/utils/RustConstant"
+	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
+	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/validation"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
 	"strconv"
+	"time"
 )
 
 // UserController Operations about Users
@@ -19,17 +22,12 @@ type UserController struct {
 	controllers.BaseController
 }
 
-// Login  登录
-func (u *UserController) Login() {
-	// 通过登录 source 方式 来判读 是邮箱还是第三方
-	// 邮箱： 通过  Email 和 密码登录
-	// 第三方：统一通过第三方授权登录
-	//username := u.GetString("email")
-	//password := u.GetString("password")
-	source, _ := u.GetInt("source")
-
+// Code  邮箱验证码
+func (u *UserController) Code() {
+	// 获取邮箱地址发送验证码
+	email := u.GetString("email")
 	valid := validation.Validation{}
-	valid.Required(source, "source")
+	valid.Required(email, "email")
 
 	if valid.HasErrors() {
 		// 如果有错误信息，证明验证没通过
@@ -39,19 +37,52 @@ func (u *UserController) Login() {
 		}
 		u.Fail("表单验证错误", 500)
 	} else {
-		switch source {
-		case RustConstant.EMAIL:
-			break
-		case RustConstant.GITEE:
-			u.Redirect(RustGitee.RedirectUrl(), 302)
-			break
-		case RustConstant.GITHUP:
-			u.Redirect(RustGitHup.RedirectUrl(), 302)
-			break
-		default:
-			u.Fail("登录方式不存在", 500)
+
+		// 生成验证码  放到redis里面  可以 已邮箱做key
+
+		randstr := utils.RandString(6)
+
+		// 1 分钟  设置到  redis里面去
+		err := initialize.Rdb.Set(email, randstr, time.Minute*1).Err()
+		if err != nil {
+			fmt.Println("错误", err)
 		}
-		u.Ok("成功")
+
+		// 发送邮箱验证码
+		rustEmail := RustEmail.NewDefaultSendEmail()
+		rustEmail.Send([]string{email}, "Rust中文网", "<h1>来自Rust中文网验证码："+randstr+"</h1>")
+		u.Ok("发送成功")
+	}
+
+}
+
+// Login  邮箱登录
+func (u *UserController) Login() {
+	email := u.GetString("email")
+	code := u.GetString("code")
+
+	valid := validation.Validation{}
+	valid.Required(code, "code")
+	valid.Required(email, "email")
+
+	if valid.HasErrors() {
+		// 如果有错误信息，证明验证没通过
+		// 打印错误信息
+		for _, err := range valid.Errors {
+			log.Println(err.Key, err.Message)
+		}
+		u.Fail("表单验证错误", 500)
+	} else {
+
+		val, err := initialize.Rdb.Get(email).Result()
+		if err != nil {
+			fmt.Println(err)
+		}
+		if code == val {
+			u.Ok("成功")
+		} else {
+			u.Fail("验证码不正确", 500)
+		}
 	}
 }
 
