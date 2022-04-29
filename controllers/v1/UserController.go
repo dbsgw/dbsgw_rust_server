@@ -4,6 +4,7 @@ import (
 	"dbsgw_rust_server/controllers"
 	"dbsgw_rust_server/initialize"
 	"dbsgw_rust_server/models"
+	v1 "dbsgw_rust_server/service/v1"
 	"dbsgw_rust_server/utils"
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
@@ -154,11 +155,15 @@ func (u *UserController) Login() {
 					return
 				}
 
+				userinfo := v1.GetUserInfo(uid)
+
 				u.SetSession(token, UserBase)
 				u.Ok(map[string]interface{}{
 					"msg":   "注册成功",
 					"token": token,
+					"data":  userinfo,
 				})
+
 				break
 			case 1:
 				GetBase := []models.UserBase{}
@@ -178,11 +183,12 @@ func (u *UserController) Login() {
 					u.Fail("token生成失败", 500)
 					return
 				}
-
+				userinfo := v1.GetUserInfo(GetBase[0].Uid)
 				u.SetSession(token, GetBase[0])
 				u.Ok(map[string]interface{}{
 					"msg":   "登录成功",
 					"token": token,
+					"data":  userinfo,
 				})
 
 			default:
@@ -296,10 +302,13 @@ func (u *UserController) OauthGitee() {
 			return
 		}
 
+		userinfo := v1.GetUserInfo(uid)
+
 		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
 			"msg":   "注册成功",
 			"token": token,
+			"data":  userinfo,
 		})
 		break
 	case 1:
@@ -320,11 +329,12 @@ func (u *UserController) OauthGitee() {
 			u.Fail("token生成失败", 500)
 			return
 		}
-
+		userinfo := v1.GetUserInfo(GetBase[0].Uid)
 		u.SetSession(token, GetBase[0])
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
 			"token": token,
+			"data":  userinfo,
 		})
 
 	default:
@@ -433,11 +443,13 @@ func (u *UserController) OauthGitHup() {
 			u.Fail("token生成失败", 500)
 			return
 		}
+		userinfo := v1.GetUserInfo(uid)
 
 		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
 			"msg":   "注册成功",
 			"token": token,
+			"data":  userinfo,
 		})
 		break
 	case 1:
@@ -458,11 +470,12 @@ func (u *UserController) OauthGitHup() {
 			u.Fail("token生成失败", 500)
 			return
 		}
-
+		userinfo := v1.GetUserInfo(GetBase[0].Uid)
 		u.SetSession(token, GetBase[0])
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
 			"token": token,
+			"data":  userinfo,
 		})
 
 	default:
