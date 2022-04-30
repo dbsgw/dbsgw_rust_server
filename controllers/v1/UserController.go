@@ -9,12 +9,9 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
-	"dbsgw_rust_server/utils/RustJwt"
-	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
-	beego "github.com/beego/beego/v2/server/web"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"log"
 	"strconv"
@@ -144,18 +141,18 @@ func (u *UserController) Login() {
 					u.Fail("插入UserAuth失败", 500)
 					return
 				}
-				Secrect, err := beego.AppConfig.String("Secrect")
+
+				token, err := v1.RustCreateToken(GetAuth[0].Uid)
 				if err != nil {
-					logs.Info("获取jwt密钥错误", err)
-				}
-				token, err := RustJwt.CreateToken(uid, Secrect)
-				if err != nil {
-					logs.Info("token生成失败", err)
 					u.Fail("token生成失败", 500)
 					return
 				}
 
-				userinfo := v1.GetUserInfo(uid)
+				userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+				if err != nil {
+					u.Fail("获取用户信息失败", 500)
+					return
+				}
 
 				u.SetSession(token, UserBase)
 				u.Ok(map[string]interface{}{
@@ -166,25 +163,19 @@ func (u *UserController) Login() {
 
 				break
 			case 1:
-				GetBase := []models.UserBase{}
-				num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
+
+				token, err := v1.RustCreateToken(GetAuth[0].Uid)
 				if err != nil {
-					logs.Error("用户查询base报错---系统错误", err)
-					u.Fail("用户查询base报错---系统错误", 500)
-					return
-				}
-				Secrect, err := beego.AppConfig.String("Secrect")
-				if err != nil {
-					logs.Info("获取jwt密钥错误", err)
-				}
-				token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
-				if err != nil {
-					logs.Info("token生成失败", err)
 					u.Fail("token生成失败", 500)
 					return
 				}
-				userinfo := v1.GetUserInfo(GetBase[0].Uid)
-				u.SetSession(token, GetBase[0])
+
+				userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+				if err != nil {
+					u.Fail("获取用户信息失败", 500)
+					return
+				}
+				u.SetSession(token, userinfo)
 				u.Ok(map[string]interface{}{
 					"msg":   "登录成功",
 					"token": token,
@@ -228,16 +219,6 @@ func (u *UserController) OauthGitee() {
 		u.Fail("user.Id为空---系统错误", 500)
 		return
 	}
-	//// 通过token 获取邮箱
-	//emailsReust := RustGitee.GetEmails(userToken)
-	//// 序列化  取邮箱
-	//emailsAll := []map[string]interface{}{}
-	//json.Unmarshal([]byte(emailsReust), &emailsAll)
-	//
-	//email := ""
-	//if len(emailsAll) != 0 {
-	//	email = emailsAll[0]["email"].(string)
-	//}
 
 	// 插入数据库
 	o := orm.NewOrm()
@@ -291,18 +272,17 @@ func (u *UserController) OauthGitee() {
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
-		Secrect, err := beego.AppConfig.String("Secrect")
+
+		token, err := v1.RustCreateToken(GetAuth[0].Uid)
 		if err != nil {
-			logs.Info("获取jwt密钥错误", err)
-		}
-		token, err := RustJwt.CreateToken(uid, Secrect)
-		if err != nil {
-			logs.Info("token生成失败", err)
 			u.Fail("token生成失败", 500)
 			return
 		}
-
-		userinfo := v1.GetUserInfo(uid)
+		userinfo, err := v1.GetUserInfo(uid)
+		if err != nil {
+			u.Fail("获取用户信息失败", 500)
+			return
+		}
 
 		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
@@ -312,25 +292,17 @@ func (u *UserController) OauthGitee() {
 		})
 		break
 	case 1:
-		GetBase := []models.UserBase{}
-		num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
+		token, err := v1.RustCreateToken(GetAuth[0].Uid)
 		if err != nil {
-			logs.Error("用户查询base报错---系统错误", err)
-			u.Fail("用户查询base报错---系统错误", 500)
-			return
-		}
-		Secrect, err := beego.AppConfig.String("Secrect")
-		if err != nil {
-			logs.Info("获取jwt密钥错误", err)
-		}
-		token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
-		if err != nil {
-			logs.Info("token生成失败", err)
 			u.Fail("token生成失败", 500)
 			return
 		}
-		userinfo := v1.GetUserInfo(GetBase[0].Uid)
-		u.SetSession(token, GetBase[0])
+		userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+		if err != nil {
+			u.Fail("获取用户信息失败", 500)
+			return
+		}
+		u.SetSession(token, userinfo)
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
 			"token": token,
@@ -352,7 +324,6 @@ func (u *UserController) OauthGitHup() {
 		u.Fail("code为空---系统错误", 500)
 		return
 	}
-	fmt.Println(code, "0000000000000000000000000000000000000000")
 	// 通过code 获取token
 	userToken := RustGitHup.GetAccessToken(code)
 	bl = utils.IsEmpty(userToken.AccessToken)
@@ -369,16 +340,6 @@ func (u *UserController) OauthGitHup() {
 		u.Fail("user.Id为空---系统错误", 500)
 		return
 	}
-	//// 通过token 获取邮箱
-	//emailsReust := RustGitHup.GetEmails(userToken)
-	//// 序列化  取邮箱
-	//emailsAll := []map[string]interface{}{}
-	//json.Unmarshal([]byte(emailsReust), &emailsAll)
-	//
-	//email := ""
-	//if len(emailsAll) != 0 {
-	//	email = emailsAll[0]["email"].(string)
-	//}
 
 	// 插入数据库
 	o := orm.NewOrm()
@@ -433,17 +394,16 @@ func (u *UserController) OauthGitHup() {
 			return
 		}
 
-		Secrect, err := beego.AppConfig.String("Secrect")
+		token, err := v1.RustCreateToken(GetAuth[0].Uid)
 		if err != nil {
-			logs.Info("获取jwt密钥错误", err)
-		}
-		token, err := RustJwt.CreateToken(uid, Secrect)
-		if err != nil {
-			logs.Info("token生成失败", err)
 			u.Fail("token生成失败", 500)
 			return
 		}
-		userinfo := v1.GetUserInfo(uid)
+		userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+		if err != nil {
+			u.Fail("获取用户信息失败", 500)
+			return
+		}
 
 		u.SetSession(token, UserBase)
 		u.Ok(map[string]interface{}{
@@ -453,25 +413,18 @@ func (u *UserController) OauthGitHup() {
 		})
 		break
 	case 1:
-		GetBase := []models.UserBase{}
-		num, err = o.Raw("select * from user_base where uid =?", GetAuth[0].Uid).QueryRows(&GetBase)
+		token, err := v1.RustCreateToken(GetAuth[0].Uid)
 		if err != nil {
-			logs.Error("用户查询base报错---系统错误", err)
-			u.Fail("用户查询base报错---系统错误", 500)
-			return
-		}
-		Secrect, err := beego.AppConfig.String("Secrect")
-		if err != nil {
-			logs.Info("获取jwt密钥错误", err)
-		}
-		token, err := RustJwt.CreateToken(GetBase[0].Uid, Secrect)
-		if err != nil {
-			logs.Info("token生成失败", err)
 			u.Fail("token生成失败", 500)
 			return
 		}
-		userinfo := v1.GetUserInfo(GetBase[0].Uid)
-		u.SetSession(token, GetBase[0])
+
+		userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+		if err != nil {
+			u.Fail("获取用户信息失败", 500)
+			return
+		}
+		u.SetSession(token, userinfo)
 		u.Ok(map[string]interface{}{
 			"msg":   "登录成功",
 			"token": token,

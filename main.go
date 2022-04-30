@@ -11,6 +11,7 @@ import (
 
 func init() {
 	gob.Register(models.UserBase{})
+	gob.Register(models.UserAuth{})
 }
 func main() {
 
