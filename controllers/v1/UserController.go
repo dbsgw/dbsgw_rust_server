@@ -9,6 +9,7 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
+	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
@@ -88,103 +89,36 @@ func (u *UserController) Login() {
 		}
 		if code == val {
 
-			// 登录注册  有就登录  没有就注册
-			// 插入数据库
-			o := orm.NewOrm()
-			GetAuth := []models.UserAuth{}
-			num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 1, email).QueryRows(&GetAuth)
-			if err != nil {
-				logs.Error("用户查询auth报错---系统错误", err)
-				u.Fail("用户查询auth报错---系统错误", 500)
-				return
+			uid, _ := gonanoid.New()
+			UserAuth := models.UserAuth{
+				Uid:          uid,
+				IdentityType: 1,
+				Identifier:   email,
+				Certificate:  "",
+				CreateTime:   int(utils.GetUnix()),
+				UpdateTime:   int(utils.GetUnix()),
+			}
+			UserBase := models.UserBase{
+				Uid:            uid,
+				UserRole:       0,
+				RegisterSource: 1,
+				UserName:       "新用户",
+				NickName:       "",
+				Gender:         0,
+				Birthday:       0,
+				Signature:      "",
+				Mobile:         "",
+				MobileBindTime: 0,
+				Email:          "",
+				EmailBindTime:  0,
+				Face:           "",
+				Face200:        "",
+				Srcface:        "",
+				CreateTime:     int(utils.GetUnix()),
+				UpdateTime:     int(utils.GetUnix()),
 			}
 
-			switch num {
-			case 0:
-				uid, _ := gonanoid.New()
-				UserAuth := models.UserAuth{
-					Uid:          uid,
-					IdentityType: 1,
-					Identifier:   email,
-					Certificate:  "",
-					CreateTime:   int(utils.GetUnix()),
-					UpdateTime:   int(utils.GetUnix()),
-				}
-				UserBase := models.UserBase{
-					Uid:            uid,
-					UserRole:       0,
-					RegisterSource: 1,
-					UserName:       "",
-					NickName:       "",
-					Gender:         0,
-					Birthday:       0,
-					Signature:      "",
-					Mobile:         "",
-					MobileBindTime: 0,
-					Email:          "",
-					EmailBindTime:  0,
-					Face:           "",
-					Face200:        "",
-					Srcface:        "",
-					CreateTime:     int(utils.GetUnix()),
-					UpdateTime:     int(utils.GetUnix()),
-				}
-				_, err = o.Insert(&UserBase)
-				if err != nil {
-					logs.Error("插入UserBase失败", err)
-					u.Fail("插入UserBase失败", 500)
-					return
-				}
-				_, err = o.Insert(&UserAuth)
-				if err != nil {
-					logs.Error("插入UserAuth失败", err)
-					u.Fail("插入UserAuth失败", 500)
-					return
-				}
-
-				token, err := v1.RustCreateToken(GetAuth[0].Uid)
-				if err != nil {
-					u.Fail("token生成失败", 500)
-					return
-				}
-
-				userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
-				if err != nil {
-					u.Fail("获取用户信息失败", 500)
-					return
-				}
-
-				u.SetSession(token, UserBase)
-				u.Ok(map[string]interface{}{
-					"msg":   "注册成功",
-					"token": token,
-					"data":  userinfo,
-				})
-
-				break
-			case 1:
-
-				token, err := v1.RustCreateToken(GetAuth[0].Uid)
-				if err != nil {
-					u.Fail("token生成失败", 500)
-					return
-				}
-
-				userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
-				if err != nil {
-					u.Fail("获取用户信息失败", 500)
-					return
-				}
-				u.SetSession(token, userinfo)
-				u.Ok(map[string]interface{}{
-					"msg":   "登录成功",
-					"token": token,
-					"data":  userinfo,
-				})
-
-			default:
-				u.Fail("用户存在多个账号", 500)
-			}
+			u.RustCreate(&UserAuth, &UserBase, email, 1)
 
 		} else {
 			logs.Info("验证码不正确")
@@ -220,98 +154,38 @@ func (u *UserController) OauthGitee() {
 		return
 	}
 
-	// 插入数据库
-	o := orm.NewOrm()
-	GetAuth := []models.UserAuth{}
-	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 2, user.Id).QueryRows(&GetAuth)
-	if err != nil {
-		logs.Error("用户查询auth报错---系统错误", err)
-		u.Fail("用户查询auth报错---系统错误", 500)
-		return
+	uid, _ := gonanoid.New()
+	UserAuth := models.UserAuth{
+		Uid:          uid,
+		IdentityType: 2,
+		Identifier:   strconv.Itoa(user.Id),
+		Certificate:  "",
+		CreateTime:   int(utils.GetUnix()),
+		UpdateTime:   int(utils.GetUnix()),
+	}
+	UserBase := models.UserBase{
+		Uid:            uid,
+		UserRole:       0,
+		RegisterSource: 2,
+		UserName:       user.Login,
+		NickName:       user.Name,
+		Gender:         0,
+		Birthday:       0,
+		Signature:      "",
+		Mobile:         "",
+		MobileBindTime: 0,
+		Email:          "",
+		EmailBindTime:  0,
+		Face:           user.AvatarUrl,
+		Face200:        "",
+		Srcface:        "",
+		CreateTime:     int(utils.GetUnix()),
+		UpdateTime:     int(utils.GetUnix()),
 	}
 
-	switch num {
-	case 0:
-		uid, _ := gonanoid.New()
-		UserAuth := models.UserAuth{
-			Uid:          uid,
-			IdentityType: 2,
-			Identifier:   strconv.Itoa(user.Id),
-			Certificate:  "",
-			CreateTime:   int(utils.GetUnix()),
-			UpdateTime:   int(utils.GetUnix()),
-		}
-		UserBase := models.UserBase{
-			Uid:            uid,
-			UserRole:       0,
-			RegisterSource: 2,
-			UserName:       user.Login,
-			NickName:       user.Name,
-			Gender:         0,
-			Birthday:       0,
-			Signature:      "",
-			Mobile:         "",
-			MobileBindTime: 0,
-			Email:          "",
-			EmailBindTime:  0,
-			Face:           user.AvatarUrl,
-			Face200:        "",
-			Srcface:        "",
-			CreateTime:     int(utils.GetUnix()),
-			UpdateTime:     int(utils.GetUnix()),
-		}
-		_, err = o.Insert(&UserBase)
-		if err != nil {
-			logs.Error("插入UserBase失败", err)
-			u.Fail("插入UserBase失败", 500)
-			return
-		}
-		_, err = o.Insert(&UserAuth)
-		if err != nil {
-			logs.Error("插入UserAuth失败", err)
-			u.Fail("插入UserAuth失败", 500)
-			return
-		}
+	id := strconv.Itoa(user.Id)
+	u.RustCreate(&UserAuth, &UserBase, id, 2)
 
-		token, err := v1.RustCreateToken(GetAuth[0].Uid)
-		if err != nil {
-			u.Fail("token生成失败", 500)
-			return
-		}
-		userinfo, err := v1.GetUserInfo(uid)
-		if err != nil {
-			u.Fail("获取用户信息失败", 500)
-			return
-		}
-
-		u.SetSession(token, UserBase)
-		u.Ok(map[string]interface{}{
-			"msg":   "注册成功",
-			"token": token,
-			"data":  userinfo,
-		})
-		break
-	case 1:
-		token, err := v1.RustCreateToken(GetAuth[0].Uid)
-		if err != nil {
-			u.Fail("token生成失败", 500)
-			return
-		}
-		userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
-		if err != nil {
-			u.Fail("获取用户信息失败", 500)
-			return
-		}
-		u.SetSession(token, userinfo)
-		u.Ok(map[string]interface{}{
-			"msg":   "登录成功",
-			"token": token,
-			"data":  userinfo,
-		})
-
-	default:
-		u.Fail("用户存在多个账号", 500)
-	}
 }
 
 // OauthGitHup 授权githup
@@ -340,11 +214,47 @@ func (u *UserController) OauthGitHup() {
 		u.Fail("user.Id为空---系统错误", 500)
 		return
 	}
+	uid, _ := gonanoid.New()
 
+	UserAuth := models.UserAuth{
+		Uid:          uid,
+		IdentityType: 3,
+		Identifier:   strconv.Itoa(user.Id),
+		Certificate:  "",
+		CreateTime:   int(utils.GetUnix()),
+		UpdateTime:   int(utils.GetUnix()),
+	}
+	UserBase := models.UserBase{
+		Uid:            uid,
+		UserRole:       0,
+		RegisterSource: 3,
+		UserName:       user.Login,
+		NickName:       user.Name,
+		Gender:         0,
+		Birthday:       0,
+		Signature:      "",
+		Mobile:         "",
+		MobileBindTime: 0,
+		Email:          "",
+		EmailBindTime:  0,
+		Face:           user.AvatarUrl,
+		Face200:        "",
+		Srcface:        "",
+		CreateTime:     int(utils.GetUnix()),
+		UpdateTime:     int(utils.GetUnix()),
+	}
+
+	id := strconv.Itoa(user.Id)
+	u.RustCreate(&UserAuth, &UserBase, id, 3)
+
+}
+
+func (u UserController) RustCreate(UserAuth *models.UserAuth, UserBase *models.UserBase, uid string, types int) {
+	fmt.Println(UserBase, UserAuth, uid, types, "------------------------")
 	// 插入数据库
 	o := orm.NewOrm()
 	GetAuth := []models.UserAuth{}
-	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", 3, user.Id).QueryRows(&GetAuth)
+	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", types, uid).QueryRows(&GetAuth)
 	if err != nil {
 		logs.Error("用户查询auth报错---系统错误", err)
 		u.Fail("用户查询auth报错---系统错误", 500)
@@ -353,34 +263,7 @@ func (u *UserController) OauthGitHup() {
 
 	switch num {
 	case 0:
-		uid, _ := gonanoid.New()
-		UserAuth := models.UserAuth{
-			Uid:          uid,
-			IdentityType: 3,
-			Identifier:   strconv.Itoa(user.Id),
-			Certificate:  "",
-			CreateTime:   int(utils.GetUnix()),
-			UpdateTime:   int(utils.GetUnix()),
-		}
-		UserBase := models.UserBase{
-			Uid:            uid,
-			UserRole:       0,
-			RegisterSource: 3,
-			UserName:       user.Login,
-			NickName:       user.Name,
-			Gender:         0,
-			Birthday:       0,
-			Signature:      "",
-			Mobile:         "",
-			MobileBindTime: 0,
-			Email:          "",
-			EmailBindTime:  0,
-			Face:           user.AvatarUrl,
-			Face200:        "",
-			Srcface:        "",
-			CreateTime:     int(utils.GetUnix()),
-			UpdateTime:     int(utils.GetUnix()),
-		}
+
 		_, err = o.Insert(&UserBase)
 		if err != nil {
 			logs.Error("插入UserBase失败---系统错误", err)
@@ -434,5 +317,4 @@ func (u *UserController) OauthGitHup() {
 	default:
 		u.Fail("用户存在多个账号", 500)
 	}
-
 }
