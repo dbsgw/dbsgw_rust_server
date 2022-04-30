@@ -24,6 +24,33 @@ type UserController struct {
 	controllers.BaseController
 }
 
+// Info 用户详情
+func (u *UserController) Info() {
+	id := u.Ctx.Input.Param(":id")
+	userinfo, err := v1.GetUserInfo(id)
+	if err != nil {
+		u.Fail("获取用户信息失败", 500)
+		return
+	}
+	u.Ok(userinfo)
+}
+
+// InfoPut 更新详情
+func (u *UserController) InfoPut() {
+	id := u.Ctx.Input.Param(":id")
+	NickName := u.GetString("NickName")
+	Mobile := u.GetString("Mobile")
+	base := models.UserBase{}
+	base.NickName = NickName
+	base.Mobile = Mobile
+	base.UpdateTime = int(utils.GetUnix())
+	err := v1.GetUserUpdateInfo(base, id)
+	if err != nil {
+		u.Fail("修改失败", 500)
+	}
+	u.Ok("修改成功")
+}
+
 // Code  邮箱验证码
 func (u *UserController) Code() {
 	// 获取邮箱地址发送验证码

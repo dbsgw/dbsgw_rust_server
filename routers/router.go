@@ -27,6 +27,10 @@ func init() {
 		beego.NSBefore(middleware.Auth),
 		// 登录/注册
 		beego.NSNamespace("/user",
+
+			beego.NSRouter("/info/:id", &v1.UserController{}, "get:Info"),    // 获取用户详情
+			beego.NSRouter("/info/:id", &v1.UserController{}, "put:InfoPut"), // 更新用户详情
+
 			beego.NSRouter("/login", &v1.UserController{}, "get:Login"),                    // 登录接口
 			beego.NSRouter("/login/code", &v1.UserController{}, "get:Code"),                // 登录邮箱验证码
 			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),   // gitee回调接口
