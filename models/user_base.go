@@ -4,7 +4,7 @@ import "github.com/beego/beego/v2/client/orm"
 
 // UserBase 用户信息表
 type UserBase struct {
-	Id             int    `orm:"-"`
+	Id             int    `orm:"-" json:"-"`
 	Uid            string `json:"uid"`              // '用户ID'
 	UserRole       int8   `json:"user_role"`        // '2正常用户 3禁言用户 4虚拟用户 5运营'
 	RegisterSource int8   `json:"register_source"`  // '注册来源：1邮箱 2gitee 3githup '

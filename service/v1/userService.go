@@ -33,21 +33,17 @@ func GetUserInfo(uid string) (models.UserBase, error) {
 }
 
 // GetUserUpdateInfo 通过 uid 更新用户信息的
-func GetUserUpdateInfo(base models.UserBase, uid string) error {
+func GetUserUpdateInfo(mobild, nick_name, uid string) error {
 	fmt.Println(uid, "uid----------")
 	o := orm.NewOrm()
-	if num, err := o.Update(base); err == nil {
-		fmt.Println(num, "error")
-		return err
+
+	_, err := o.Raw("update user_base set mobile = ?,nick_name=? where uid = ?", mobild, nick_name, uid).Exec()
+	if err != nil {
+		logs.Info("更新用户信息失败", err)
+		return errors.New("更新用户信息失败")
 	}
-	//user := models.UserBase{Uid: uid}
-	//if o.Read(&user) == nil {
-	//	if num, err := o.Update(&base); err == nil {
-	//		fmt.Println(num)
-	//		return err
-	//	}
-	//}
-	return errors.New("用户不存在")
+
+	return nil
 }
 
 // RustCreateToken 传入uid 生成生成 token

@@ -9,6 +9,7 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
+	"encoding/json"
 	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
@@ -38,13 +39,11 @@ func (u *UserController) Info() {
 // InfoPut 更新详情
 func (u *UserController) InfoPut() {
 	id := u.Ctx.Input.Param(":id")
-	NickName := u.GetString("NickName")
-	Mobile := u.GetString("Mobile")
-	base := models.UserBase{}
-	base.NickName = NickName
-	base.Mobile = Mobile
-	base.UpdateTime = int(utils.GetUnix())
-	err := v1.GetUserUpdateInfo(base, id)
+	var num1 map[string]interface{}
+	json.Unmarshal(u.Ctx.Input.RequestBody, &num1)
+
+	fmt.Println(id, "000", num1["Mobile"], "===", num1["NickName"], "---", num1)
+	err := v1.GetUserUpdateInfo(num1["Mobile"].(string), num1["NickName"].(string), id)
 	if err != nil {
 		u.Fail("修改失败", 500)
 	}
