@@ -1,3 +1,48 @@
+create table article
+(
+    article_id      varchar(22)                      null comment '文章自增ID',
+    ac_id           mediumint unsigned default '0'   not null comment '分类id',
+    article_url     varchar(100)                     null comment '文章跳转链接',
+    article_show    tinyint unsigned   default '1'   not null comment '文章是否显示，0为否，1为是，默认为1',
+    article_sort    tinyint unsigned   default '255' not null comment '文章排序',
+    article_title   varchar(100)                     null comment '文章标题',
+    article_content text                             null comment '内容',
+    article_time    int unsigned       default '0'   not null comment '文章发布时间',
+    article_pic     varchar(255)       default ''    not null comment '文章主图'
+)
+    comment '文章表' charset = utf8;
+
+create table article_comment
+(
+    comment_id    varchar(22)  null comment '评论人的id',
+    topic_id      varchar(22)  null comment '被评论文章id',
+    topic_type    varchar(22)  null comment '被评论文章类型',
+    content       text         null comment '评论内容',
+    from_uid      varchar(22)  null comment '评论者id',
+    from_nickname varchar(32)  null comment '评论者昵称',
+    from_avatar   varchar(255) null comment '评论者头像',
+    time          int unsigned null comment '评论的时间'
+)
+    comment '评论表' charset = utf8;
+
+create table article_reply
+(
+    comment_id    varchar(22)  null comment '被回复评论的id',
+    reply_id      varchar(22)  null comment '回复id【unique唯一值】,这个表的id',
+    topic_id      varchar(22)  null comment '被回复文章id',
+    topic_type    varchar(22)  null comment '被回复文章类型',
+    content       text         null comment '回复内容',
+    from_uid      varchar(32)  null comment '回复者uid',
+    to_uid        varchar(32)  null comment '被回复者uid',
+    from_nickname varchar(32)  null comment '回复者昵称',
+    to_nickname   varchar(32)  null comment '被回复者昵称',
+    from_avatar   varchar(255) null comment '回复者头像',
+    to_avatar     varchar(255) null comment '被回复者头像',
+    time          int unsigned null comment '回复的时间',
+    flag          tinyint(1)   null comment '可选值，用于回复时是否要显示对谁的回复'
+)
+    comment '评论表' charset = utf8;
+
 create table user_auth
 (
     id            bigint auto_increment
@@ -11,7 +56,7 @@ create table user_auth
     constraint only
         unique (uid, identity_type)
 )
-    comment '用户授权表';
+    comment '用户授权表' auto_increment = 19;
 
 create index idx_uid
     on user_auth (uid);
