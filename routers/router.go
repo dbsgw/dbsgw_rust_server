@@ -24,7 +24,6 @@ func init() {
 			}
 			return false
 		}),
-		beego.NSBefore(middleware.Auth),
 		// 登录/注册
 		beego.NSNamespace("/user",
 
@@ -35,6 +34,17 @@ func init() {
 			beego.NSRouter("/login/code", &v1.UserController{}, "get:Code"),                // 登录邮箱验证码
 			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),   // gitee回调接口
 			beego.NSRouter("/login/oauth/githup", &v1.UserController{}, "get:OauthGitHup"), // githup回调接口
+		),
+		beego.NSBefore(middleware.Auth),
+
+		// 权限页面
+		beego.NSNamespace("/admin",
+
+			beego.NSRouter("/article/", &v1.ArticleController{}, "get:ArticleAll"),          // 获取所以文章 带分页
+			beego.NSRouter("/article/:id", &v1.ArticleController{}, "get:ArticleId"),        // 通过id获取文章
+			beego.NSRouter("/article/", &v1.ArticleController{}, "post:ArticleCreate"),      // 创建文章
+			beego.NSRouter("/article/:id", &v1.ArticleController{}, "delete:ArticleDelete"), // 删除文章
+			beego.NSRouter("/article/:id", &v1.ArticleController{}, "put:ArticleEdit"),      // 修改文章
 		),
 	)
 	beego.AddNamespace(ns)

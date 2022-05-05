@@ -28,3 +28,8 @@ type UserBase struct {
 func init() {
 	orm.RegisterModel(new(UserBase))
 }
+
+// TableName 自定义表名
+func (UserBase) TableName() string {
+	return "user_base"
+}

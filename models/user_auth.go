@@ -16,3 +16,8 @@ type UserAuth struct {
 func init() {
 	orm.RegisterModel(new(UserAuth))
 }
+
+// TableName 自定义表名
+func (UserAuth) TableName() string {
+	return "user_auth"
+}

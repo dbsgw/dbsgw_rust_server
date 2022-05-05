@@ -22,3 +22,8 @@ type ArticleReply struct {
 func init() {
 	orm.RegisterModel(new(ArticleReply))
 }
+
+// TableName 自定义表名
+func (ArticleReply) TableName() string {
+	return "article_reply"
+}

@@ -4,7 +4,7 @@ import "github.com/beego/beego/v2/client/orm"
 
 // Article 文章表
 type Article struct {
-	Id             int    `json:"id"`              // id 主键
+	Id             int    `json:"id" orm:"-"`      // id 主键
 	ArticleId      string `json:"article_id"`      // '文章自增ID',
 	AcId           int    `json:"ac_id"`           // '分类id',
 	ArticleUrl     string `json:"article___url"`   // '文章跳转链接',
@@ -18,4 +18,9 @@ type Article struct {
 
 func init() {
 	orm.RegisterModel(new(Article))
+}
+
+// TableName 自定义表名
+func (Article) TableName() string {
+	return "article"
 }

@@ -17,3 +17,8 @@ type ArticleComment struct {
 func init() {
 	orm.RegisterModel(new(ArticleComment))
 }
+
+// TableName 自定义表名
+func (ArticleComment) TableName() string {
+	return "article_comment"
+}
