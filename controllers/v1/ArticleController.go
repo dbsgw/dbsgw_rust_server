@@ -5,6 +5,8 @@ import (
 	"dbsgw_rust_server/initialize"
 	"dbsgw_rust_server/models"
 	"dbsgw_rust_server/utils"
+	"encoding/json"
+	"fmt"
 	"github.com/beego/beego/v2/core/logs"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
@@ -12,6 +14,11 @@ import (
 // ArticleController Operations about Users
 type ArticleController struct {
 	controllers.BaseController
+}
+type resultArticleUse struct {
+	Title     string `json:"title"`
+	Connect   string `json:"connect"`
+	ConnectMk string `json:"connect_mk"`
 }
 
 // ArticleAll 查全部文章
@@ -41,20 +48,36 @@ func (u *ArticleController) ArticleId() {
 
 // ArticleCreate 创建文章
 func (u *ArticleController) ArticleCreate() {
+
+	result := resultArticleUse{}
+	err := json.Unmarshal(u.Ctx.Input.RequestBody, &result)
+	if err != nil {
+		fmt.Println(err, "=================")
+	}
+	token := u.Ctx.Request.Header["Authorization"]
+	if len(token) != 1 {
+		u.Fail("获取用户token失败", 500)
+		logs.Info("获取用户token失败")
+		return
+	}
+	sessionResult := u.GetSession(token[0])
+	fmt.Println(result, string(u.Ctx.Input.RequestBody), sessionResult.(models.UserBase).Uid)
 	uid, _ := gonanoid.New()
 	article := models.Article{
-		ArticleId:      uid,
-		AcId:           0,
-		ArticleUrl:     "",
-		ArticleShow:    0,
-		ArticleSort:    0,
-		ArticleTitle:   "",
-		ArticleContent: "",
-		ArticleTime:    int(utils.GetUnix()),
-		ArticlePic:     "",
+		ArticleId:        uid,
+		AcId:             0,
+		ArticleUrl:       "",
+		ArticleShow:      0,
+		ArticleSort:      0,
+		ArticleTitle:     result.Title,
+		ArticleContent:   result.Connect,
+		ArticleContentMk: result.ConnectMk,
+		ArticleTime:      int(utils.GetUnix()),
+		ArticlePic:       "",
+		UserId:           sessionResult.(models.UserBase).Uid,
 	}
 
-	err := initialize.DB.Create(&article).Error
+	err = initialize.DB.Create(&article).Error
 	if err != nil {
 		logs.Error("用户插入article报错---系统错误", err)
 		u.Fail("用户插入article报错---系统错误", 500)
@@ -79,9 +102,12 @@ func (u *ArticleController) ArticleDelete() {
 // ArticleEdit 修改文章
 func (u *ArticleController) ArticleEdit() {
 	id := u.Ctx.Input.Param(":id")
+	result := resultArticleUse{}
+	json.Unmarshal(u.Ctx.Input.RequestBody, &result)
 	article := models.Article{}
 	err := initialize.DB.Model(&article).Where("article_id = ?", id).Updates(models.Article{
-		ArticleTime: int(utils.GetUnix()),
+		ArticleTitle:   result.Title,
+		ArticleContent: result.Connect,
 	}).Error
 	if err != nil {
 		logs.Error("用户更新article报错---系统错误", err)

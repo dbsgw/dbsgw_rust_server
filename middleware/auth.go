@@ -16,7 +16,9 @@ func Auth(ctx *context.Context) {
 	if StrContainers {
 		fmt.Println(1111)
 	}
-	fmt.Println("2222222222222------11111")
+	toekn := ctx.Request.Header["Authorization"]
+
+	fmt.Println("2222222222222------11111", toekn)
 	//if string(urlPath.Path) != "/admin/login" {
 	//	cookie := ctx.Input.Cookie("token")
 	//
