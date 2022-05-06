@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"time"
 )
 
@@ -60,7 +59,6 @@ func IsEmpty(con interface{}) bool {
 			return true
 		}
 	default:
-		fmt.Println("执行false")
 		return false
 	}
 }

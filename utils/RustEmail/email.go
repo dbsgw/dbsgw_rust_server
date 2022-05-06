@@ -3,7 +3,6 @@ package RustEmail
 // 此处配置 没有放到app.conf 是为了 保护个人邮箱安全
 
 import (
-	"fmt"
 	"gopkg.in/gomail.v2"
 )
 
@@ -38,7 +37,6 @@ func (e RustSendEmail) Send(mailTo []string, subject string, body string) error 
 		// 处理错误
 		return err
 	}
-	fmt.Println("发送成功")
 	return nil
 }
 

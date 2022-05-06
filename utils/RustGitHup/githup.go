@@ -3,7 +3,7 @@ package RustGitHup
 import (
 	"dbsgw_rust_server/utils/RustHttp"
 	"encoding/json"
-	"fmt"
+	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 	"net/url"
 	"time"
@@ -101,7 +101,7 @@ func GetAccessToken(code string) Token {
 	str := RustHttp.PostJson("https://github.com/login/oauth/access_token", form)
 	err := json.Unmarshal([]byte(str), &userToken)
 	if err != nil {
-		fmt.Println(err, "err------------")
+		logs.Info("githup的json转换失败", err)
 	}
 	return userToken
 }
@@ -119,6 +119,5 @@ func GetUserInfos(userToken Token) UserInfo {
 
 func GetEmails(userToken Token) string {
 	data := RustHttp.GetJson("https://api.github.com/user/email/visibility", userToken.AccessToken)
-	fmt.Println(data, "email----")
 	return data
 }

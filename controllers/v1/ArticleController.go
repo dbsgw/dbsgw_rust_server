@@ -23,21 +23,36 @@ type resultArticleUse struct {
 
 // ArticleAll 查全部文章
 func (u *ArticleController) ArticleAll() {
+
+	size, _ := u.GetInt("size")
+	page, _ := u.GetInt("page")
+	if size == 0 {
+		size = 20
+	}
+	if page == 0 {
+		page = 1
+	}
+	var count int64
 	GetArticle := []models.Article{}
-	err := initialize.DB.Find(&GetArticle).Limit(100).Error
+	err := initialize.DB.Offset((page - 1) * size).Limit(size).Order("article_time desc").Find(&GetArticle).Error
 	if err != nil {
 		logs.Error("用户查询article报错---系统错误", err)
 		u.Fail("用户查询article报错---系统错误", 500)
 		return
 	}
-	u.Ok(GetArticle)
+	initialize.DB.Table("article").Count(&count)
+	fmt.Println(count, "-----")
+	u.Ok(map[string]interface{}{
+		"result": GetArticle,
+		"total":  count,
+	})
 }
 
 // ArticleId 通过id查询文章
 func (u *ArticleController) ArticleId() {
 	id := u.Ctx.Input.Param(":id")
 	GetArticle := models.Article{}
-	err := initialize.DB.Find(&GetArticle, "article_id = ?", id).Limit(100).Error
+	err := initialize.DB.Limit(100).Find(&GetArticle, "article_id = ?", id).Error
 	if err != nil {
 		logs.Error("用户查询article报错---系统错误", err)
 		u.Fail("用户查询article报错---系统错误", 500)
@@ -52,7 +67,7 @@ func (u *ArticleController) ArticleCreate() {
 	result := resultArticleUse{}
 	err := json.Unmarshal(u.Ctx.Input.RequestBody, &result)
 	if err != nil {
-		fmt.Println(err, "=================")
+		logs.Info("创建文章转换json失败", err)
 	}
 	token := u.Ctx.Request.Header["Authorization"]
 	if len(token) != 1 {
@@ -61,7 +76,6 @@ func (u *ArticleController) ArticleCreate() {
 		return
 	}
 	sessionResult := u.GetSession(token[0])
-	fmt.Println(result, string(u.Ctx.Input.RequestBody), sessionResult.(models.UserBase).Uid)
 	uid, _ := gonanoid.New()
 	article := models.Article{
 		ArticleId:        uid,
@@ -75,6 +89,7 @@ func (u *ArticleController) ArticleCreate() {
 		ArticleTime:      int(utils.GetUnix()),
 		ArticlePic:       "",
 		UserId:           sessionResult.(models.UserBase).Uid,
+		UserName:         sessionResult.(models.UserBase).NickName,
 	}
 
 	err = initialize.DB.Create(&article).Error

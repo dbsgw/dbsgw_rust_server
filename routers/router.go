@@ -9,7 +9,6 @@ package routers
 
 import (
 	"dbsgw_rust_server/controllers/v1"
-	"dbsgw_rust_server/middleware"
 	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
@@ -35,7 +34,7 @@ func init() {
 			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),   // gitee回调接口
 			beego.NSRouter("/login/oauth/githup", &v1.UserController{}, "get:OauthGitHup"), // githup回调接口
 		),
-		beego.NSBefore(middleware.Auth),
+		//beego.NSBefore(middleware.Auth),
 
 		// 权限页面
 		beego.NSNamespace("/admin",

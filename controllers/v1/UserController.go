@@ -10,7 +10,6 @@ import (
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
 	"encoding/json"
-	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
@@ -42,7 +41,6 @@ func (u *UserController) InfoPut() {
 	var num1 map[string]interface{}
 	json.Unmarshal(u.Ctx.Input.RequestBody, &num1)
 
-	fmt.Println(id, "000", num1["Mobile"], "===", num1["NickName"], "---", num1)
 	err := v1.GetUserUpdateInfo(num1["Mobile"].(string), num1["NickName"].(string), id)
 	if err != nil {
 		u.Fail("修改失败", 500)
@@ -276,7 +274,6 @@ func (u *UserController) OauthGitHup() {
 }
 
 func (u UserController) RustCreate(UserAuth *models.UserAuth, UserBase *models.UserBase, uid string, types int) {
-	fmt.Println(UserBase, UserAuth, uid, types, "------------------------")
 	// 插入数据库
 	o := orm.NewOrm()
 	GetAuth := []models.UserAuth{}

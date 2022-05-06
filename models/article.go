@@ -16,6 +16,7 @@ type Article struct {
 	ArticleTime      int    `json:"article_time"`       // '文章发布时间',
 	ArticlePic       string `json:"article_pic"`        // '文章主图'
 	UserId           string `json:"user_id"`            // '用户id'
+	UserName         string `json:"user_name"`          // '用户昵称'
 }
 
 func init() {

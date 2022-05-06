@@ -2,7 +2,6 @@ package RustHttp
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -87,7 +86,6 @@ func GetJson(requestUrl, token string) string {
 	//Authorization: token 361507da
 	req.Header.Set("Authorization", "token "+token)
 	req.URL.RawQuery = q.Encode()
-	fmt.Println(req.URL.String())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

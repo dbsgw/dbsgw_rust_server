@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/beego/beego/v2/server/web/context"
 	"net/url"
@@ -15,10 +16,23 @@ func Auth(ctx *context.Context) {
 	StrContainers := strings.Contains(urlPath.Path, "/admin")
 	if StrContainers {
 		fmt.Println(1111)
-	}
-	toekn := ctx.Request.Header["Authorization"]
+		toekn := ctx.Request.Header["Authorization"]
 
-	fmt.Println("2222222222222------11111", toekn)
+		fmt.Println(len(toekn), toekn)
+		if len(toekn) == 0 {
+			data := map[string]interface{}{
+				"code": 401,
+				"data": false,
+				"msg":  "未登录/登录过期",
+			}
+			str, _ := json.Marshal(data)
+			ctx.Output.SetStatus(401)
+			ctx.Output.Body(str)
+			return
+		}
+	}
+
+	//fmt.Println("2222222222222------11111", toekn)
 	//if string(urlPath.Path) != "/admin/login" {
 	//	cookie := ctx.Input.Cookie("token")
 	//
