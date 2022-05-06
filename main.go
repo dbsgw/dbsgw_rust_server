@@ -16,7 +16,7 @@ func init() {
 func main() {
 
 	beego.BConfig.WebConfig.Session.SessionProvider = "redis"
-	beego.BConfig.WebConfig.Session.SessionProviderConfig = "127.0.0.1:6379"
+	beego.BConfig.WebConfig.Session.SessionProviderConfig = "106.12.125.65:6379,,72812E30873455DCEE2CE2D1EE26E4AB"
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"

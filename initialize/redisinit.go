@@ -12,12 +12,12 @@ var Rdb *redis.Client
 
 func redisinit() {
 	Rdb = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "",
+		Addr:     "106.12.125.65:6379",
+		Password: "72812E30873455DCEE2CE2D1EE26E4AB",
 		DB:       1,
 	})
 	_, err := Rdb.Ping().Result()
-	
+
 	if err != nil {
 		logs.Error("redis链接失败", err)
 		return

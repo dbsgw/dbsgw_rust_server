@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"fmt"
+	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -40,6 +41,7 @@ func GormregistDatabase() {
 	}), &gorm.Config{})
 
 	if err != nil {
+		logs.Error(err)
 		fmt.Println("mysql数据库链接失败gorm")
 		return
 	}
