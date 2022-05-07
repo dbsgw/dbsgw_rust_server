@@ -1,11 +1,11 @@
 package v1
 
 import (
+	"dbsgw_rust_server/initialize"
 	"dbsgw_rust_server/models"
 	"dbsgw_rust_server/utils/RustJwt"
 	"errors"
 	"fmt"
-	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -13,9 +13,8 @@ import (
 // GetUserInfo 通过 uid 获取用户信息的
 func GetUserInfo(uid string) (models.UserBase, error) {
 	fmt.Println(uid)
-	o := orm.NewOrm()
 	user := []models.UserBase{}
-	_, err := o.Raw("select * from user_base where uid = ? limit 1", uid).QueryRows(&user)
+	err := initialize.DB.Raw("select * from user_base where uid = ? limit 1", uid).Scan(&user).Error
 	if len(user) == 0 {
 		if err != nil {
 			logs.Info("获取用户信息失败", err)
@@ -34,10 +33,8 @@ func GetUserInfo(uid string) (models.UserBase, error) {
 
 // GetUserUpdateInfo 通过 uid 更新用户信息的
 func GetUserUpdateInfo(mobild, nick_name, uid string) error {
-	fmt.Println(uid, "uid----------")
-	o := orm.NewOrm()
-
-	_, err := o.Raw("update user_base set mobile = ?,nick_name=? where uid = ?", mobild, nick_name, uid).Exec()
+	result := map[string]interface{}{}
+	err := initialize.DB.Raw("update user_base set mobile = ?,nick_name=? where uid = ?", mobild, nick_name, uid).Scan(&result).Error
 	if err != nil {
 		logs.Info("更新用户信息失败", err)
 		return errors.New("更新用户信息失败")

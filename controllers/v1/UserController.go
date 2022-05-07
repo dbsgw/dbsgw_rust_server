@@ -10,7 +10,6 @@ import (
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
 	"encoding/json"
-	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -275,37 +274,35 @@ func (u *UserController) OauthGitHup() {
 
 func (u UserController) RustCreate(UserAuth *models.UserAuth, UserBase *models.UserBase, uid string, types int) {
 	// 插入数据库
-	o := orm.NewOrm()
 	GetAuth := []models.UserAuth{}
-	num, err := o.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", types, uid).QueryRows(&GetAuth)
+	err := initialize.DB.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", types, uid).Scan(&GetAuth).Error
 	if err != nil {
 		logs.Error("用户查询auth报错---系统错误", err)
 		u.Fail("用户查询auth报错---系统错误", 500)
 		return
 	}
 
-	switch num {
+	switch len(GetAuth) {
 	case 0:
-
-		_, err = o.Insert(&UserBase)
+		err = initialize.DB.Create(&UserBase).Error
 		if err != nil {
 			logs.Error("插入UserBase失败---系统错误", err)
 			u.Fail("插入UserBase失败", 500)
 			return
 		}
-		_, err = o.Insert(&UserAuth)
+		err = initialize.DB.Create(&UserAuth).Error
 		if err != nil {
 			logs.Error("插入UserAuth失败---系统错误", err)
 			u.Fail("插入UserAuth失败", 500)
 			return
 		}
 
-		token, err := v1.RustCreateToken(GetAuth[0].Uid)
+		token, err := v1.RustCreateToken(UserBase.Uid)
 		if err != nil {
 			u.Fail("token生成失败", 500)
 			return
 		}
-		userinfo, err := v1.GetUserInfo(GetAuth[0].Uid)
+		userinfo, err := v1.GetUserInfo(UserBase.Uid)
 		if err != nil {
 			u.Fail("获取用户信息失败", 500)
 			return
