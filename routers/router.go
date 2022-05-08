@@ -49,6 +49,10 @@ func init() {
 			beego.NSRouter("/article/:id", &v1.ArticleController{}, "delete:ArticleDelete"), // 删除文章
 			beego.NSRouter("/article/:id", &v1.ArticleController{}, "put:ArticleEdit"),      // 修改文章
 		),
+
+		// 留言/回复
+		beego.NSRouter("/comment", &v1.CommentController{}, "get:CommentAll"),     // 查看全部回复
+		beego.NSRouter("/comment", &v1.CommentController{}, "post:CommentCreate"), // 添加评论
 	)
 	beego.AddNamespace(ns)
 }
