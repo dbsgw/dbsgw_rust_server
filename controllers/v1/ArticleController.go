@@ -76,6 +76,7 @@ func (u *ArticleController) ArticleCreate() {
 		return
 	}
 	sessionResult := u.GetSession(token[0])
+	fmt.Println(sessionResult, "------", token)
 	uid, _ := gonanoid.New()
 	article := models.Article{
 		ArticleId:        uid,

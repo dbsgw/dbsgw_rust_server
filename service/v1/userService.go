@@ -5,14 +5,12 @@ import (
 	"dbsgw_rust_server/models"
 	"dbsgw_rust_server/utils/RustJwt"
 	"errors"
-	"fmt"
 	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 )
 
 // GetUserInfo 通过 uid 获取用户信息的
 func GetUserInfo(uid string) (models.UserBase, error) {
-	fmt.Println(uid)
 	user := []models.UserBase{}
 	err := initialize.DB.Raw("select * from user_base where uid = ? limit 1", uid).Scan(&user).Error
 	if len(user) == 0 {

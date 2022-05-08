@@ -33,6 +33,10 @@ func init() {
 			beego.NSRouter("/login/code", &v1.UserController{}, "get:Code"),                // 登录邮箱验证码
 			beego.NSRouter("/login/oauth/gitee", &v1.UserController{}, "get:OauthGitee"),   // gitee回调接口
 			beego.NSRouter("/login/oauth/githup", &v1.UserController{}, "get:OauthGitHup"), // githup回调接口
+
+			beego.NSRouter("/article", &v1.UserController{}, "get:ArticleAll"), // 获取所以文章 带分页
+
+			beego.NSRouter("/logout", &v1.UserController{}, "get:Logout"), // 退出登录
 		),
 		//beego.NSBefore(middleware.Auth),
 

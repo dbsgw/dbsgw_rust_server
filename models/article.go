@@ -1,7 +1,5 @@
 package models
 
-import "github.com/beego/beego/v2/client/orm"
-
 // Article 文章表
 type Article struct {
 	Id               int    `json:"id" orm:"-"`         // id 主键
@@ -17,10 +15,6 @@ type Article struct {
 	ArticlePic       string `json:"article_pic"`        // '文章主图'
 	UserId           string `json:"user_id"`            // '用户id'
 	UserName         string `json:"user_name"`          // '用户昵称'
-}
-
-func init() {
-	orm.RegisterModel(new(Article))
 }
 
 // TableName 自定义表名

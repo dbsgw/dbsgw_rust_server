@@ -1,7 +1,5 @@
 package models
 
-import "github.com/beego/beego/v2/client/orm"
-
 // ArticleReply 回复表
 type ArticleReply struct {
 	CommentId    string `json:"comment_id"`    // '被回复评论的id',
@@ -17,10 +15,6 @@ type ArticleReply struct {
 	ToAvatar     string `json:"to_avatar"`     // '被回复者头像',
 	time         int    `json:"time"`          // '回复的时间',
 	flag         int    `json:"flag"`          // '可选值，用于回复时是否要显示对谁的回复'
-}
-
-func init() {
-	orm.RegisterModel(new(ArticleReply))
 }
 
 // TableName 自定义表名

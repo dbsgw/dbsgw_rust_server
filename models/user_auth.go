@@ -1,7 +1,5 @@
 package models
 
-import "github.com/beego/beego/v2/client/orm"
-
 // UserAuth 用户授权表
 type UserAuth struct {
 	Id           int    `json:"id"`            // id 主键
@@ -11,10 +9,6 @@ type UserAuth struct {
 	Certificate  string `json:"certificate"`   // '密码凭证(站内的保存密码，站外的不保存或保存token)',
 	CreateTime   int    `json:"create_time"`   // '绑定时间',
 	UpdateTime   int    `json:"update_time"`   // '更新绑定时间',
-}
-
-func init() {
-	orm.RegisterModel(new(UserAuth))
 }
 
 // TableName 自定义表名

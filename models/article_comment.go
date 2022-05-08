@@ -1,7 +1,5 @@
 package models
 
-import "github.com/beego/beego/v2/client/orm"
-
 // ArticleComment 评论表
 type ArticleComment struct {
 	CommentId    string `json:"comment_id"`    // '评论人的id,这个表的id',
@@ -12,10 +10,6 @@ type ArticleComment struct {
 	FromNickname string `json:"from_nickname"` // '评论者昵称',
 	FromAvatar   string `json:"from_avatar"`   // '评论者头像',
 	Time         string `json:"time"`          // '评论的时间'
-}
-
-func init() {
-	orm.RegisterModel(new(ArticleComment))
 }
 
 // TableName 自定义表名

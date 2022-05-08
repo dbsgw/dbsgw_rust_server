@@ -1,7 +1,5 @@
 package models
 
-import "github.com/beego/beego/v2/client/orm"
-
 // UserBase 用户信息表
 type UserBase struct {
 	Id             int    `orm:"-" json:"-"`
@@ -23,10 +21,6 @@ type UserBase struct {
 	CreateTime     int    `json:"create_time"`      // '创建时间'
 	UpdateTime     int    `json:"update_time"`      // '修改时间'
 	//PushToken      string `json:"push_token"`       // '用户设备push_token'
-}
-
-func init() {
-	orm.RegisterModel(new(UserBase))
 }
 
 // TableName 自定义表名
