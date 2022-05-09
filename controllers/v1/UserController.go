@@ -133,7 +133,12 @@ func (u *UserController) Code() {
 
 		// 发送邮箱验证码
 		rustEmail := RustEmail.NewDefaultSendEmail()
-		rustEmail.Send([]string{email}, "Rust中文网", "<h1>来自Rust中文网验证码："+randstr+"</h1>")
+		err = rustEmail.Send([]string{email}, "Rust中文网", "<h1>来自Rust中文网验证码："+randstr+"</h1>")
+		if err != nil {
+			logs.Error(err, "邮箱发送错误")
+			u.Fail("邮箱发送错误", 500)
+			return
+		}
 		u.Ok("发送成功")
 	}
 

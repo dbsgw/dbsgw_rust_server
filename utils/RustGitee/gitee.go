@@ -3,6 +3,7 @@ package RustGitee
 import (
 	"dbsgw_rust_server/utils/RustHttp"
 	"encoding/json"
+	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 	"net/url"
 	"time"
@@ -80,7 +81,10 @@ func GetAccessToken(code string) Token {
 	}
 	userToken := Token{}
 	str := RustHttp.Post("https://gitee.com/oauth/token", form)
-	json.Unmarshal([]byte(str), &userToken)
+	err := json.Unmarshal([]byte(str), &userToken)
+	if err != nil {
+		logs.Error(str, err)
+	}
 	return userToken
 }
 
@@ -89,7 +93,10 @@ func GetAccessToken(code string) Token {
 func GetUserInfos(userToken Token) RustUserInfo {
 	data := RustHttp.Get("https://gitee.com/api/v5/user?access_token=" + userToken.AccessToken)
 	userInfos := RustUserInfo{}
-	json.Unmarshal([]byte(data), &userInfos)
+	err := json.Unmarshal([]byte(data), &userInfos)
+	if err != nil {
+		logs.Error(data, err)
+	}
 	return userInfos
 }
 

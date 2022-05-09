@@ -13,9 +13,10 @@ type RustSendEmail struct {
 	Password string
 }
 
+// 阿里云默认屏蔽的25端口  请用465
 const (
-	RustEmailHost     = "smtp.mxhichina.com"
-	RustEmailPort     = 25
+	RustEmailHost     = "smtp.qiye.aliyun.com"
+	RustEmailPort     = 465
 	RustEmailUsername = "admin@dbsgw.cn"
 	RustEmailPassword = "ly8334721.="
 )
