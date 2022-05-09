@@ -5,6 +5,7 @@ import (
 	"dbsgw_rust_server/models"
 	"dbsgw_rust_server/utils/RustJwt"
 	"errors"
+	"github.com/beego/beego/v2/adapter/context"
 	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -53,4 +54,19 @@ func RustCreateToken(uid string) (string, error) {
 		return "", err
 	}
 	return token, nil
+}
+
+// RustTokenGetUserInfo 通过token获取用户信息
+func RustTokenGetUserInfo() models.UserBase {
+	u := context.NewContext()
+	token := u.Request.Header["Authorization"]
+
+	userinfo := models.UserBase{}
+	if len(token) != 1 {
+		logs.Info("获取用户token失败")
+		return userinfo
+	}
+
+	sessionResult := u.Input.Session(token[0])
+	return sessionResult.(models.UserBase)
 }

@@ -29,10 +29,12 @@ func GetDay() string {
 	return time.Now().Format(template)
 }
 
+// GetUnixNano 获取当前时间 纳秒
 func GetUnixNano() int64 {
 	return time.Now().UnixNano()
 }
 
+// GetUnix 获取当前时间戳
 func GetUnix() int64 {
 	return time.Now().Unix()
 }
