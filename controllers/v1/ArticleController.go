@@ -71,7 +71,7 @@ func (u *ArticleController) ArticleCreate() {
 	}
 	token := u.Ctx.Request.Header["Authorization"]
 	if len(token) != 1 {
-		u.Fail("获取用户token失败", 500)
+		u.Fail("获取用户token失败", 401)
 		logs.Info("获取用户token失败")
 		return
 	}

@@ -9,6 +9,8 @@ package routers
 
 import (
 	"dbsgw_rust_server/controllers/v1"
+	"dbsgw_rust_server/models"
+	"encoding/json"
 	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
@@ -16,13 +18,51 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/v1",
-		beego.NSCond(func(ctx *context.Context) bool {
-			fmt.Println(ctx.Input.Domain())
-			if ctx.Input.Domain() == "127.0.0.1" {
-				return true
+		beego.NSBefore(func(ctx *context.Context) {
+			token := ctx.Request.Header["Authorization"]
+			fmt.Println(len(token), token)
+			// token 返回是 字符串切片  只能用数组判断
+			if len(token) != 0 {
+				// token 有值
+				userinfo := ctx.Input.Session(token[0])
+				user, ok := userinfo.(models.UserBase)
+				if !ok {
+					data := map[string]interface{}{
+						"code": 401,
+						"data": false,
+						"msg":  "未登录/登录过期",
+					}
+					str, _ := json.Marshal(data)
+					ctx.Output.SetStatus(401)
+					ctx.Output.Body(str)
+					return
+				} else {
+					fmt.Println(user.Uid, "--********--")
+				}
 			}
-			return false
 		}),
+		//beego.NSCond(func(ctx *context.Context) bool {
+		//	token := ctx.Request.Header["Authorization"]
+		//	fmt.Println(len(token), token)
+		//	// token 返回是 字符串切片  只能用数组判断
+		//	if len(token) != 0 {
+		//		// token 有值
+		//		userinfo := ctx.Input.Session(token[0])
+		//		_, ok := userinfo.(models.UserBase)
+		//		if !ok {
+		//			data := map[string]interface{}{
+		//				"code": 401,
+		//				"data": false,
+		//				"msg":  "未登录/登录过期",
+		//			}
+		//			str, _ := json.Marshal(data)
+		//			ctx.Output.SetStatus(401)
+		//			ctx.Output.Body(str)
+		//			return true
+		//		}
+		//	}
+		//	return false
+		//}),
 		// 登录/注册
 		beego.NSNamespace("/user",
 
