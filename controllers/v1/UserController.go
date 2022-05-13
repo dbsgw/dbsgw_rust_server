@@ -23,6 +23,19 @@ type UserController struct {
 	controllers.BaseController
 }
 
+// ArticleId 通过id查询文章
+func (u *UserController) ArticleId() {
+	id := u.Ctx.Input.Param(":id")
+	GetArticle := models.Article{}
+	err := initialize.DB.Limit(100).Find(&GetArticle, "article_id = ?", id).Error
+	if err != nil {
+		logs.Error("用户查询article报错---系统错误", err)
+		u.Fail("用户查询article报错---系统错误", 500)
+		return
+	}
+	u.Ok(GetArticle)
+}
+
 // ArticleAll 用户所有 文章的
 func (u *UserController) ArticleAll() {
 
