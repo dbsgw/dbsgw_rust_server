@@ -14,11 +14,13 @@ type Result struct {
 	Status int         `json:"status"`
 }
 
+// Ok 成功
 func (c *BaseController) Ok(data any) {
 	c.Data["json"] = SuccessData(data)
 	c.ServeJSON()
 }
 
+// Fail 失败
 func (c *BaseController) Fail(msg string, status int) {
 	c.Data["json"] = ErrMsg(msg, status)
 	c.ServeJSON()
@@ -29,7 +31,7 @@ func ErrMsg(msg string, status ...int) Result {
 	if len(status) > 0 {
 		r.Status = status[0]
 	} else {
-		r.Status = 500000
+		r.Status = 500
 	}
 	r.Msg = msg
 	r.Data = nil

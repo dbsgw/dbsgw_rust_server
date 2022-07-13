@@ -1,4 +1,4 @@
-package v1
+package login
 
 import (
 	"dbsgw_rust_server/controllers"
@@ -9,7 +9,6 @@ import (
 	"dbsgw_rust_server/utils/RustEmail"
 	"dbsgw_rust_server/utils/RustGitHup"
 	"dbsgw_rust_server/utils/RustGitee"
-	"encoding/json"
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -18,13 +17,13 @@ import (
 	"time"
 )
 
-// UserController Operations about Users
-type UserController struct {
+// LoginController 121
+type LoginController struct {
 	controllers.BaseController
 }
 
 // ArticleId 通过id查询文章
-func (u *UserController) ArticleId() {
+func (u *LoginController) ArticleId() {
 	id := u.Ctx.Input.Param(":id")
 	GetArticle := models.Article{}
 	err := initialize.DB.Limit(100).Find(&GetArticle, "article_id = ?", id).Error
@@ -37,19 +36,10 @@ func (u *UserController) ArticleId() {
 }
 
 // ArticleAll 用户所有 文章的
-func (u *UserController) ArticleAll() {
+func (u *LoginController) ArticleAll() {
 
 	size, _ := u.GetInt("size")
 	page, _ := u.GetInt("page")
-
-	token := u.Ctx.Request.Header["Authorization"]
-	if len(token) != 1 {
-		u.Fail("获取用户token失败", 401)
-		logs.Info("获取用户token失败")
-		return
-	}
-	sessionResult := u.GetSession(token[0])
-
 	if size == 0 {
 		size = 20
 	}
@@ -58,13 +48,13 @@ func (u *UserController) ArticleAll() {
 	}
 	var count int64
 	GetArticle := []models.Article{}
-	err := initialize.DB.Where("user_id = ?", sessionResult.(models.UserBase).Uid).Offset((page - 1) * size).Limit(size).Order("article_time desc").Find(&GetArticle).Error
+	err := initialize.DB.Offset((page - 1) * size).Limit(size).Order("article_time desc").Find(&GetArticle).Error
 	if err != nil {
 		logs.Error("用户查询article报错---系统错误", err)
 		u.Fail("用户查询article报错---系统错误", 500)
 		return
 	}
-	initialize.DB.Table("article").Where("user_id = ?", sessionResult.(models.UserBase).Uid).Count(&count)
+	initialize.DB.Table("article").Count(&count)
 	u.Ok(map[string]interface{}{
 		"result": GetArticle,
 		"total":  count,
@@ -72,7 +62,7 @@ func (u *UserController) ArticleAll() {
 }
 
 // Logout 退出登录
-func (u *UserController) Logout() {
+func (u *LoginController) Logout() {
 	token := u.Ctx.Request.Header["Authorization"]
 	if len(token) != 1 {
 		u.Fail("获取用户token失败", 401)
@@ -88,33 +78,8 @@ func (u *UserController) Logout() {
 	u.Ok("退出成功")
 }
 
-// Info 用户详情
-func (u *UserController) Info() {
-	id := u.Ctx.Input.Param(":id")
-	userinfo, err := v1.GetUserInfo(id)
-	if err != nil {
-		u.Fail("获取用户信息失败", 500)
-		return
-	}
-	u.Ok(userinfo)
-}
-
-// InfoPut 更新详情
-func (u *UserController) InfoPut() {
-	id := u.Ctx.Input.Param(":id")
-	var userInfo map[string]interface{}
-	json.Unmarshal(u.Ctx.Input.RequestBody, &userInfo)
-	//valid := validation.Validation{}
-
-	err := v1.GetUserUpdateInfo(userInfo["Mobile"].(string), userInfo["NickName"].(string), id)
-	if err != nil {
-		u.Fail("修改失败", 500)
-	}
-	u.Ok("修改成功")
-}
-
 // Code  邮箱验证码
-func (u *UserController) Code() {
+func (u *LoginController) Code() {
 	// 获取邮箱地址发送验证码
 	email := u.GetString("email")
 	valid := validation.Validation{}
@@ -158,7 +123,7 @@ func (u *UserController) Code() {
 }
 
 // Login  邮箱登录
-func (u *UserController) Login() {
+func (u *LoginController) Login() {
 	email := u.GetString("email")
 	code := u.GetString("code")
 
@@ -223,7 +188,7 @@ func (u *UserController) Login() {
 }
 
 // OauthGitee  授权gitee
-func (u *UserController) OauthGitee() {
+func (u *LoginController) OauthGitee() {
 	// 获取code
 	code := u.GetString("code")
 	bl := utils.IsEmpty(code)
@@ -283,7 +248,7 @@ func (u *UserController) OauthGitee() {
 }
 
 // OauthGitHup 授权githup
-func (u *UserController) OauthGitHup() {
+func (u *LoginController) OauthGitHup() {
 	// 获取code
 	code := u.GetString("code")
 	bl := utils.IsEmpty(code)
@@ -343,7 +308,7 @@ func (u *UserController) OauthGitHup() {
 
 }
 
-func (u UserController) RustCreate(UserAuth *models.UserAuth, UserBase *models.UserBase, uid string, types int) {
+func (u LoginController) RustCreate(UserAuth *models.UserAuth, UserBase *models.UserBase, uid string, types int) {
 	// 插入数据库
 	GetAuth := []models.UserAuth{}
 	err := initialize.DB.Raw("select * from user_auth where identity_type = ? and identifier = ? limit 100", types, uid).Scan(&GetAuth).Error
